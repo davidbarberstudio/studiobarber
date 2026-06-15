@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Studio Barber</title>
+<title>David Barbero Studio</title>
 
 <style>
-/* RESET DE PANTALLA */
+/* RESET DE PANTALLA MODERNO CLÁSICO */
 body, html {
   margin: 0;
   padding: 0;
@@ -28,13 +28,14 @@ body, html {
   align-items: center;
   z-index: 99999;
 }
-#loader img {
-  width: 200px;
-  animation: giro 4s linear infinite;
-}
-@keyframes giro {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.loader-title {
+  font-size: 26px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  background: linear-gradient(90deg, #D4AF37, #fff, #D4AF37);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .loader-bar {
   width: 180px; height: 4px;
@@ -52,22 +53,29 @@ body, html {
   100% { width: 100%; }
 }
 
-/* ESTILOS DE TITULO Y HORARIOS CLASSIC LUXURY */
+/* ESTILOS DE LUXURY BRANDING */
 .titulo {
-  font-size: 32px;
+  font-size: 30px;
   font-weight: bold;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
   margin: 25px 0 5px 0;
   background: linear-gradient(90deg, #D4AF37, #fff, #D4AF37);
   background-size: 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.slogan {
+  font-size: 13px;
+  color: #fff;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+}
 .horarios-info {
-  font-size: 14px;
+  font-size: 13px;
   color: #D4AF37;
   line-height: 1.6;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 /* CONTENEDOR DEL FORMULARIO */
@@ -83,7 +91,7 @@ body, html {
   box-sizing: border-box;
 }
 
-/* CARDS DE BARBEROS */
+/* CARDS DE PROFESIONALES */
 .barbeiros-container {
   display: flex;
   justify-content: center;
@@ -93,25 +101,27 @@ body, html {
 .card-barbeiro {
   background: #000;
   border-radius: 12px;
-  padding: 10px;
-  width: 100px;
+  padding: 12px;
+  width: 110px;
   cursor: pointer;
   transition: 0.3s;
   border: 2px solid #222;
 }
 .card-barbeiro img {
-  width: 70px; height: 70px;
+  width: 65px; height: 65px;
   border-radius: 50%;
   object-fit: cover;
+  border: 1px solid #333;
 }
 .card-barbeiro span {
   display: block;
-  margin-top: 5px;
+  margin-top: 7px;
   font-size: 14px;
+  font-weight: bold;
 }
 .card-barbeiro.active {
   border-color: #D4AF37;
-  box-shadow: 0 0 10px rgba(212,175,55,0.4);
+  box-shadow: 0 0 10px rgba(212,175,55,0.3);
 }
 
 /* INPUTS Y SELECTOR */
@@ -119,9 +129,11 @@ label {
   display: block;
   text-align: left;
   margin: 14px 0 6px 15px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 select, input {
   width: 92%;
@@ -155,17 +167,14 @@ button {
   font-weight: bold;
   border-radius: 8px;
   cursor: pointer;
-  margin-top: 15px;
+  margin-top: 20px;
   width: 92%;
   transition: 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 button:hover {
   transform: scale(1.02);
-}
-.btn-maps {
-  background: #111;
-  color: #D4AF37;
-  border: 1px solid #333;
 }
 
 /* AVISO DE CONFIRMACIÓN */
@@ -184,11 +193,12 @@ button:hover {
 <body>
 
 <div id="loader">
-  <div class="titulo" style="font-size:24px;">STUDIO BARBER</div>
+  <div class="loader-title">DAVID BARBERO STUDIO</div>
   <div class="loader-bar"><span></span></div>
 </div>
 
-<div class="titulo">STUDIO BARBER</div>
+<div class="titulo">DAVID BARBERO STUDIO</div>
+<div class="slogan">Estilo, Precisão e Confiança</div>
 <div class="horarios-info">
   🕒 Segunda: 08:30–11:00 | 13:00–17:30<br>
   🕒 Terça a Sexta: 08:30–11:00 | 13:00–18:00<br>
@@ -198,37 +208,33 @@ button:hover {
 <div id="form-container">
   <form id="agendaForm">
     
-    <label>💈 Escolha o Barbeiro</label>
+    <label>💈 Escolha o Profissional</label>
     <div class="barbeiros-container">
       <div class="card-barbeiro active" onclick="seleccionarBarber('David', this)">
-        <img src="https://via.placeholder.com/150/000000/D4AF37?text=David">
+        <img src="https://via.placeholder.com/150/000000/D4AF37?text=D">
         <span>David</span>
-      </div>
-      <div class="card-barbeiro" onclick="seleccionarBarber('Barbeiro2', this)">
-        <img src="https://via.placeholder.com/150/000000/D4AF37?text=B2">
-        <span>Barbeiro 2</span>
       </div>
     </div>
     <input type="hidden" id="barbeiro" value="David">
 
-    <label>✂️ Serviço</label>
+    <label>✂️ Selecione o Serviço</label>
     <select id="servico" onchange="triggerCargaHoras()">
-      <option value="Corte">Corte — R$40 (30 min)</option>
-      <option value="Barba">Barba — R$25 (30 min)</option>
-      <option value="Corte e Barba">Corte e Barba — R$60 (1 hora)</option>
-      <option value="Sobrancelha">Sobrancelha — R$10 (30 min)</option>
+      <option value="Corte">Corte Masculino — R$40</option>
+      <option value="Barba">Barba / Barbaterapia — R$30</option>
+      <option value="Corte e Barba">Corte & Barba — R$70</option>
+      <option value="Sobrancelha">Sobrancelha — R$15</option>
     </select>
 
-    <label>📅 Data</label>
+    <label>📅 Data do Agendamento</label>
     <input type="date" id="data" required onchange="triggerCargaHoras()">
 
-    <label>👤 Nome</label>
-    <input type="text" id="nome" placeholder="Seu nome completo" required>
+    <label>👤 Seu Nome</label>
+    <input type="text" id="nome" placeholder="Digite seu nome completo" required>
 
-    <label>📱 WhatsApp</label>
+    <label>📱 Seu WhatsApp</label>
     <input type="tel" inputmode="numeric" id="telefone" placeholder="Ex: 47999999999" required>
 
-    <label>⏰ Hora disponível</label>
+    <label>⏰ Horários Disponíveis</label>
     <select id="hora" required>
       <option value="">Selecione a data primeiro...</option>
     </select>
@@ -237,7 +243,7 @@ button:hover {
   </form>
 
   <div id="confirmacao">
-    Reserva enviada com sucesso para a planilha! Redirecionando...
+    Agendamento enviado com sucesso! Redirecionando para o WhatsApp...
   </div>
 </div>
 
@@ -245,7 +251,7 @@ button:hover {
 (function(){
   "use strict";
 
-  // URL CEREBRO - PON AQUÍ LA URL QUE TE DA APP SCRIPT AL IMPLANTAR
+  // URL CEREBRO ENLAZADA DIRECTAMENTE A TU COPIA
   const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHurr-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
   // Quitar loader inicial
@@ -300,7 +306,6 @@ button:hover {
 
     selectHora.innerHTML = "<option value=''>Carregando horários...</option>";
 
-    // Calcular el día de la semana
     var partes = dataSeleccionada.split("-");
     var dateObj = new Date(partes[0], partes[1] - 1, partes[2]);
     var diaSemana = dateObj.getDay();
@@ -313,7 +318,6 @@ button:hover {
     var horariosBase = obtenerMatrizHorarios(diaSemana);
     var ocupados = [];
 
-    // Conexión asíncrona optimizada (Corregido a "Bloqueio" sin S para tu hoja)
     try {
       var respuesta = await fetch(API_URL + "?reservas=1&data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
       ocupados = await respuesta.json();
@@ -321,7 +325,6 @@ button:hover {
       console.log("Error cargando horas en segundo plano.", e);
     }
 
-    // Filtrado de horas pasadas si es el mismo día de hoy
     var agora = new Date();
     var hoyStr = agora.getFullYear() + "-" + String(agora.getMonth() + 1).padStart(2, '0') + "-" + String(agora.getDate()).padStart(2, '0');
     var horaActualStr = String(agora.getHours()).padStart(2, '0') + ":" + String(agora.getMinutes()).padStart(2, '0');
@@ -338,7 +341,7 @@ button:hover {
       var estaOcupado = (ocupados.indexOf(h) !== -1);
       var pasoHora = (dataSeleccionada === hoyStr && h <= horaActualStr);
 
-      // VALIDACIÓN QUIRÚRGICA PARA "CORTE E BARBA" (Doble bloque)
+      // Bloqueo doble para servicios largos como "Corte e Barba"
       if (servico === "Corte e Barba" && !estaOcupado && !pasoHora) {
         if (i + 1 < horariosBase.length) {
           var siguienteHora = horariosBase[i + 1];
@@ -386,7 +389,6 @@ button:hover {
     btn.disabled = true;
     btn.innerText = "Processando... ⌛";
 
-    // Guardar en Google Sheets de forma asíncrona
     fetch(API_URL, {
       method: "POST",
       body: new URLSearchParams({
@@ -402,7 +404,7 @@ button:hover {
     .then(text => {
       document.getElementById("confirmacao").style.display = "block";
       
-      var textoWhatsApp = "Olá Studio Barber!%0A%0A" +
+      var textoWhatsApp = "Olá David Barbero Studio!%0A%0A" +
                           "Gostaria de confirmar meu agendamento:%0A" +
                           "💈 Barbeiro: " + barbeiro + "%0A" +
                           "✂️ Serviço: " + servico + "%0A" +
@@ -410,6 +412,7 @@ button:hover {
                           "⏰ Hora: " + hora + "%0A" +
                           "👤 Nome: " + nome;
       
+      // CONFIGURADO TOTALMENTE CON TU NÚMERO REAL
       window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
       
       document.getElementById("nome").value = "";
