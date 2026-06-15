@@ -3,54 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>David Barbero Studio</title>
+<title>David Barber Studio</title>
 
 <style>
 html, body {
   margin: 0; padding: 0; width: 100%; height: 100%;
-  background: #000; font-family: 'Segoe UI', Arial, sans-serif; color: #ddd;
-  overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box;
+  background-color: #000000; font-family: 'Times New Roman', Georgia, serif; color: #f5f5f5;
+  overflow-x: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box;
 }
+
+/* Loader elegante de bienvenida */
 #loader {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000;
   display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999;
 }
 .loader-title {
-  font-size: 22px; font-weight: bold; letter-spacing: 3px;
-  background: linear-gradient(90deg, #D4AF37, #fff, #D4AF37); background-size: 200%;
+  font-size: 24px; font-weight: bold; letter-spacing: 4px;
+  background: linear-gradient(90deg, #b39210, #f8e48d, #b39210); background-size: 200%;
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.loader-bar { width: 140px; height: 3px; background: #222; margin-top: 15px; border-radius: 10px; overflow: hidden; }
-.loader-bar span { display: block; height: 100%; width: 0%; background: #D4AF37; animation: loading 1.2s forwards; }
+.loader-bar { width: 150px; height: 2px; background: #1a1a1a; margin-top: 15px; border-radius: 10px; overflow: hidden; }
+.loader-bar span { display: block; height: 100%; width: 0%; background: #D4AF37; animation: loading 1s forwards; }
 @keyframes loading { 100% { width: 100%; } }
 
-.header-container { margin-bottom: 10px; text-align: center; }
+.header-container { margin-bottom: 15px; text-align: center; padding: 0 10px; }
 .titulo {
-  font-size: 24px; font-weight: bold; letter-spacing: 1px; margin: 0 0 2px 0;
-  background: linear-gradient(90deg, #D4AF37, #fff, #D4AF37); background-size: 200%;
+  font-size: 28px; font-weight: bold; letter-spacing: 2px; margin: 0 0 4px 0;
+  background: linear-gradient(135deg, #c5a059 0%, #fdf0cd 50%, #c5a059 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.slogan { font-size: 11px; color: #fff; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
-.horarios-info { font-size: 10px; color: #D4AF37; line-height: 1.3; }
+.slogan { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; color: #ffffff; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; opacity: 0.9; }
+.horarios-info { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; color: #c5a059; line-height: 1.4; opacity: 0.8; }
 
 #form-container {
-  width: 92%; max-width: 380px; padding: 15px; border-radius: 12px;
-  background: #0d0d0d; border: 1px solid #1a1a1a; box-shadow: 0 0 15px rgba(212,175,55,0.08); box-sizing: border-box;
+  width: 92%; max-width: 390px; padding: 20px; border-radius: 8px;
+  background: #070707; border: 1px solid #2c2514; 
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(197, 160, 89, 0.05); box-sizing: border-box;
 }
-.barbeiros-container { display: flex; justify-content: center; gap: 10px; margin: 5px 0 10px 0; }
-.card-barbeiro { background: #000; border-radius: 8px; padding: 8px; width: 90px; cursor: pointer; transition: 0.2s; border: 2px solid #222; text-align: center; }
-.card-barbeiro img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid #333; }
-.card-barbeiro span { display: block; margin-top: 4px; font-size: 12px; font-weight: bold; }
-.card-barbeiro.active { border-color: #D4AF37; box-shadow: 0 0 8px rgba(212,175,55,0.2); }
 
-label { display: block; text-align: left; margin: 6px 0 4px 4px; font-size: 11px; font-weight: bold; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-select, input { width: 100%; padding: 10px; margin-bottom: 2px; border-radius: 6px; border: 1px solid #222; background: #000; color: #fff; font-size: 14px; box-sizing: border-box; }
-select:focus, input:focus { outline: none; border-color: #D4AF37; }
+.barbeiros-container { display: flex; justify-content: center; gap: 10px; margin: 5px 0 15px 0; }
+.card-barbeiro { background: #000; border-radius: 4px; padding: 10px; width: 100px; cursor: pointer; transition: 0.3s; border: 1px solid #222; text-align: center; }
+.card-barbeiro img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid #c5a059; }
+.card-barbeiro span { display: block; margin-top: 6px; font-size: 13px; font-weight: bold; letter-spacing: 1px; color: #ddd; }
+.card-barbeiro.active { border-color: #fdf0cd; background: #0f0e0b; box-shadow: 0 0 10px rgba(197, 160, 89, 0.15); }
 
-button { background: linear-gradient(90deg, #D4AF37, #F3E5AB); color: #000; border: none; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 15px; width: 100%; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
-button:disabled { background: #222; color: #555; cursor: not-allowed; }
+label { display: block; text-align: left; margin: 10px 0 5px 2px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; font-weight: 600; color: #8a8a8a; text-transform: uppercase; letter-spacing: 1.5px; }
+select, input { width: 100%; padding: 12px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #2a2a2a; background: #000000; color: #ffffff; font-size: 14px; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; transition: 0.2s; }
+select:focus, input:focus { outline: none; border-color: #c5a059; box-shadow: 0 0 5px rgba(197, 160, 89, 0.2); }
 
-#confirmacao { display: none; margin-top: 10px; color: #00ff7f; font-size: 13px; font-weight: bold; background: #001a0d; padding: 10px; border-radius: 6px; border: 1px solid #00ff7f; text-align: center; }
+/* Botón Dorado Metálico Premium */
+button { 
+  background: linear-gradient(135deg, #967433 0%, #c5a059 50%, #fdf0cd 100%); 
+  color: #000000; border: none; padding: 14px; font-size: 13px; font-weight: bold; 
+  border-radius: 4px; cursor: pointer; margin-top: 20px; width: 100%; 
+  transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+button:active { transform: scale(0.98); }
+button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow: none; }
+
+#confirmacao { display: none; margin-top: 15px; color: #fdf0cd; font-size: 13px; font-family: 'Segoe UI', Arial, sans-serif; background: #110f0a; padding: 12px; border-radius: 4px; border: 1px solid #c5a059; text-align: center; }
 </style>
 </head>
 <body>
@@ -75,7 +87,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; }
     <label>💈 Profissional</label>
     <div class="barbeiros-container">
       <div class="card-barbeiro active" onclick="seleccionarBarber('David', this)">
-        <img src="https://via.placeholder.com/150/000000/D4AF37?text=D">
+        <img src="https://images.unsplash.com/photo-1517832606589-7a598b647192?w=150&auto=format&fit=crop&q=60">
         <span>David</span>
       </div>
     </div>
@@ -120,7 +132,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; }
   window.addEventListener("load", function(){
     setTimeout(function(){
       document.getElementById("loader").style.display = "none";
-    }, 1000);
+    }, 800);
     
     var hoje = new Date();
     var mes = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -174,7 +186,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; }
     var ocupados = [];
 
     try {
-      // Petición optimizada asíncrona avanzada
       var respuesta = await fetch(API_URL + "?reservas=1&data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
       ocupados = await respuesta.json();
     } catch (e) {
@@ -254,8 +265,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; }
         barbeiro: barbeiro
       })
     }).then(() => {
-      document.getElementById("confirmacao").style.display = "block";
-      
+      // REDIRECCIONAMIENTO INMEDIATO AQUÍ
       var textoWhatsApp = "Olá David Barbero Studio!%0A%0A" +
                           "Gostaria de confirmar meu agendamento:%0A" +
                           "💈 Barbeiro: " + barbeiro + "%0A" +
@@ -266,16 +276,14 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; }
       
       window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
       
+      // Limpieza de campos en segundo plano
       document.getElementById("nome").value = "";
       document.getElementById("telefone").value = "";
       document.getElementById("hora").selectedIndex = 0;
       
-      setTimeout(function(){
-        document.getElementById("confirmacao").style.display = "none";
-        triggerCargaHoras();
-        btn.disabled = false;
-        btn.innerText = "Agendar Horário ✅";
-      }, 2000);
+      triggerCargaHoras();
+      btn.disabled = false;
+      btn.innerText = "Agendar Horário ✅";
     }).catch(err => {
       alert("Erro ao agendar. Tente novamente.");
       btn.disabled = false;
