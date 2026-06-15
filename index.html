@@ -151,13 +151,11 @@ select:focus, input:focus {
   border-color: #D4AF37;
 }
 
-/* ESTADO DE LAS HORAS EN EL SELECT */
 option:disabled {
   color: #555;
   background: #111;
 }
 
-/* BOTONES */
 button {
   background: linear-gradient(90deg, #D4AF37, #F3E5AB);
   color: #000;
@@ -177,7 +175,6 @@ button:hover {
   transform: scale(1.02);
 }
 
-/* AVISO DE CONFIRMACIÓN */
 #confirmacao {
   display: none;
   margin-top: 15px;
@@ -251,23 +248,19 @@ button:hover {
 (function(){
   "use strict";
 
-  // URL CEREBRO ENLAZADA DIRECTAMENTE A TU COPIA
   const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHurr-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
-  // Quitar loader inicial
   window.addEventListener("load", function(){
     setTimeout(function(){
       document.getElementById("loader").style.display = "none";
     }, 1000);
     
-    // Configurar fecha mínima de hoy
     var hoje = new Date();
     var mes = String(hoje.getMonth() + 1).padStart(2, '0');
     var dia = String(hoje.getDate()).padStart(2, '0');
     document.getElementById("data").min = hoje.getFullYear() + "-" + mes + "-" + dia;
   });
 
-  // Controladores de selección de barbero
   window.seleccionarBarber = function(nome, elemento) {
     document.getElementById("barbeiro").value = nome;
     var cards = document.querySelectorAll(".card-barbeiro");
@@ -276,7 +269,6 @@ button:hover {
     triggerCargaHoras();
   };
 
-  // Disparador inteligente de carga de horas
   window.triggerCargaHoras = function() {
     var dataVal = document.getElementById("data").value;
     if (dataVal) {
@@ -284,21 +276,17 @@ button:hover {
     }
   };
 
-  // GENERADOR DE LISTA DE HORARIOS SEGÚN EL DÍA
   function obtenerMatrizHorarios(diaSemana) {
-    if (diaSemana === 0) return []; // Domingo Cerrado
-    
-    if (diaSemana === 1) { // Lunes
+    if (diaSemana === 0) return [];
+    if (diaSemana === 1) {
       return ["08:30","09:00","09:30","10:00","10:30","11:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30"];
     }
-    if (diaSemana === 6) { // Sábado
+    if (diaSemana === 6) {
       return ["08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30"];
     }
-    // Martes a Viernes
     return ["08:30","09:00","09:30","10:00","10:30","11:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
   }
 
-  // Cargar horas desde el Servidor de forma ultra rápida
   async function carregarHorariosDisponiveis(dataSeleccionada) {
     var selectHora = document.getElementById("hora");
     var barbeiro = document.getElementById("barbeiro").value;
@@ -322,7 +310,7 @@ button:hover {
       var respuesta = await fetch(API_URL + "?reservas=1&data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
       ocupados = await respuesta.json();
     } catch (e) {
-      console.log("Error cargando horas en segundo plano.", e);
+      console.log("Error cargando horas.", e);
     }
 
     var agora = new Date();
@@ -341,7 +329,6 @@ button:hover {
       var estaOcupado = (ocupados.indexOf(h) !== -1);
       var pasoHora = (dataSeleccionada === hoyStr && h <= horaActualStr);
 
-      // Bloqueo doble para servicios largos como "Corte e Barba"
       if (servico === "Corte e Barba" && !estaOcupado && !pasoHora) {
         if (i + 1 < horariosBase.length) {
           var siguienteHora = horariosBase[i + 1];
@@ -371,7 +358,6 @@ button:hover {
     }
   }
 
-  // ACCIÓN DE AGENDAR TURNOS
   window.solicitarAgendamento = function() {
     var btn = document.getElementById("btnAgendar");
     var data = document.getElementById("data").value;
@@ -389,6 +375,7 @@ button:hover {
     btn.disabled = true;
     btn.innerText = "Processando... ⌛";
 
+    // TRUCO DE ULTRA VELOCIDAD: Lanzamos el guardado en Sheets en segundo plano
     fetch(API_URL, {
       method: "POST",
       body: new URLSearchParams({
@@ -399,38 +386,31 @@ button:hover {
         servico: servico,
         barbeiro: barbeiro
       })
-    })
-    .then(res => res.text())
-    .then(text => {
-      document.getElementById("confirmacao").style.display = "block";
-      
-      var textoWhatsApp = "Olá David Barbero Studio!%0A%0A" +
-                          "Gostaria de confirmar meu agendamento:%0A" +
-                          "💈 Barbeiro: " + barbeiro + "%0A" +
-                          "✂️ Serviço: " + servico + "%0A" +
-                          "📅 Data: " + data + "%0A" +
-                          "⏰ Hora: " + hora + "%0A" +
-                          "👤 Nome: " + nome;
-      
-      // CONFIGURADO TOTALMENTE CON TU NÚMERO REAL
-      window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
-      
-      document.getElementById("nome").value = "";
-      document.getElementById("telefone").value = "";
-      document.getElementById("hora").selectedIndex = 0;
-      
-      setTimeout(function(){
-        document.getElementById("confirmacao").style.display = "none";
-        triggerCargaHoras();
-        btn.disabled = false;
-        btn.innerText = "Agendar Horário ✅";
-      }, 3000);
-    })
-    .catch(err => {
-      alert("Erro ao salvar na planilha. Tente novamente.");
+    }).catch(err => console.log("Guardado diferido en proceso..."));
+
+    // Redirección INMEDIATA a WhatsApp sin esperar a Google Sheets
+    document.getElementById("confirmacao").style.display = "block";
+    
+    var textoWhatsApp = "Olá David Barbero Studio!%0A%0A" +
+                        "Gostaria de confirmar meu agendamento:%0A" +
+                        "💈 Barbeiro: " + barbeiro + "%0A" +
+                        "✂️ Serviço: " + servico + "%0A" +
+                        "📅 Data: " + data + "%0A" +
+                        "⏰ Hora: " + hora + "%0A" +
+                        "👤 Nome: " + nome;
+    
+    window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
+    
+    document.getElementById("nome").value = "";
+    document.getElementById("telefone").value = "";
+    document.getElementById("hora").selectedIndex = 0;
+    
+    setTimeout(function(){
+      document.getElementById("confirmacao").style.display = "none";
+      triggerCargaHoras();
       btn.disabled = false;
       btn.innerText = "Agendar Horário ✅";
-    });
+    }, 2000);
   };
 
 })();
