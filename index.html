@@ -2,172 +2,55 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>David Barbero Studio</title>
 
 <style>
-body, html {
-  margin: 0;
-  padding: 0;
-  background: #000;
-  font-family: Arial, sans-serif;
-  color: #ddd;
-  text-align: center;
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  background: #000; font-family: 'Segoe UI', Arial, sans-serif; color: #ddd;
+  overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box;
 }
 #loader {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: #000;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 99999;
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000;
+  display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999;
 }
 .loader-title {
-  font-size: 26px;
-  font-weight: bold;
-  letter-spacing: 3px;
-  background: linear-gradient(90deg, #D4AF37, #fff, #D4AF37);
-  background-size: 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 22px; font-weight: bold; letter-spacing: 3px;
+  background: linear-gradient(90deg, #D4AF37, #fff, #D4AF37); background-size: 200%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.loader-bar {
-  width: 180px; height: 4px;
-  background: #222;
-  margin-top: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-.loader-bar span {
-  display: block; height: 100%; width: 0%;
-  background: #D4AF37;
-  animation: loading 1.5s forwards;
-}
+.loader-bar { width: 140px; height: 3px; background: #222; margin-top: 15px; border-radius: 10px; overflow: hidden; }
+.loader-bar span { display: block; height: 100%; width: 0%; background: #D4AF37; animation: loading 1.2s forwards; }
 @keyframes loading { 100% { width: 100%; } }
 
+.header-container { margin-bottom: 10px; text-align: center; }
 .titulo {
-  font-size: 30px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  margin: 25px 0 5px 0;
-  background: linear-gradient(90deg, #D4AF37, #fff, #D4AF37);
-  background-size: 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 24px; font-weight: bold; letter-spacing: 1px; margin: 0 0 2px 0;
+  background: linear-gradient(90deg, #D4AF37, #fff, #D4AF37); background-size: 200%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.slogan {
-  font-size: 13px;
-  color: #fff;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  margin-bottom: 15px;
-}
-.horarios-info {
-  font-size: 13px;
-  color: #D4AF37;
-  line-height: 1.6;
-  margin-bottom: 25px;
-}
+.slogan { font-size: 11px; color: #fff; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
+.horarios-info { font-size: 10px; color: #D4AF37; line-height: 1.3; }
+
 #form-container {
-  position: relative;
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border-radius: 15px;
-  background: #0d0d0d;
-  border: 1px solid #222;
-  box-shadow: 0 0 20px rgba(212,175,55,0.1);
-  box-sizing: border-box;
+  width: 92%; max-width: 380px; padding: 15px; border-radius: 12px;
+  background: #0d0d0d; border: 1px solid #1a1a1a; box-shadow: 0 0 15px rgba(212,175,55,0.08); box-sizing: border-box;
 }
-.barbeiros-container {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin: 10px 0 20px 0;
-}
-.card-barbeiro {
-  background: #000;
-  border-radius: 12px;
-  padding: 12px;
-  width: 110px;
-  cursor: pointer;
-  transition: 0.3s;
-  border: 2px solid #222;
-}
-.card-barbeiro img {
-  width: 65px; height: 65px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid #333;
-}
-.card-barbeiro span {
-  display: block;
-  margin-top: 7px;
-  font-size: 14px;
-  font-weight: bold;
-}
-.card-barbeiro.active {
-  border-color: #D4AF37;
-  box-shadow: 0 0 10px rgba(212,175,55,0.3);
-}
-label {
-  display: block;
-  text-align: left;
-  margin: 14px 0 6px 15px;
-  font-size: 13px;
-  font-weight: bold;
-  color: #aaa;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-select, input {
-  width: 92%;
-  padding: 12px;
-  margin-bottom: 5px;
-  border-radius: 8px;
-  border: 1px solid #222;
-  background: #000;
-  color: #fff;
-  font-size: 16px;
-  box-sizing: border-box;
-}
-select:focus, input:focus {
-  outline: none;
-  border-color: #D4AF37;
-}
-option:disabled {
-  color: #555;
-  background: #111;
-}
-button {
-  background: linear-gradient(90deg, #D4AF37, #F3E5AB);
-  color: #000;
-  border: none;
-  padding: 14px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 20px;
-  width: 92%;
-  transition: 0.2s;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-button:hover { transform: scale(1.02); }
-#confirmacao {
-  display: none;
-  margin-top: 15px;
-  color: #00ff7f;
-  font-weight: bold;
-  background: #001a0d;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #00ff7f;
-}
+.barbeiros-container { display: flex; justify-content: center; gap: 10px; margin: 5px 0 10px 0; }
+.card-barbeiro { background: #000; border-radius: 8px; padding: 8px; width: 90px; cursor: pointer; transition: 0.2s; border: 2px solid #222; text-align: center; }
+.card-barbeiro img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid #333; }
+.card-barbeiro span { display: block; margin-top: 4px; font-size: 12px; font-weight: bold; }
+.card-barbeiro.active { border-color: #D4AF37; box-shadow: 0 0 8px rgba(212,175,55,0.2); }
+
+label { display: block; text-align: left; margin: 6px 0 4px 4px; font-size: 11px; font-weight: bold; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+select, input { width: 100%; padding: 10px; margin-bottom: 2px; border-radius: 6px; border: 1px solid #222; background: #000; color: #fff; font-size: 14px; box-sizing: border-box; }
+select:focus, input:focus { outline: none; border-color: #D4AF37; }
+
+button { background: linear-gradient(90deg, #D4AF37, #F3E5AB); color: #000; border: none; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 15px; width: 100%; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+button:disabled { background: #222; color: #555; cursor: not-allowed; }
+
+#confirmacao { display: none; margin-top: 10px; color: #00ff7f; font-size: 13px; font-weight: bold; background: #001a0d; padding: 10px; border-radius: 6px; border: 1px solid #00ff7f; text-align: center; }
 </style>
 </head>
 <body>
@@ -177,18 +60,19 @@ button:hover { transform: scale(1.02); }
   <div class="loader-bar"><span></span></div>
 </div>
 
-<div class="titulo">DAVID BARBERO STUDIO</div>
-<div class="slogan">Estilo, Precisão e Confiança</div>
-<div class="horarios-info">
-  🕒 Segunda: 08:30–11:00 | 13:00–17:30<br>
-  🕒 Terça a Sexta: 08:30–11:00 | 13:00–18:00<br>
-  🕒 Sábado: 08:00–11:30 | 13:00–17:30
+<div class="header-container">
+  <div class="titulo">DAVID BARBERO STUDIO</div>
+  <div class="slogan">Estilo, Precisão e Confiança</div>
+  <div class="horarios-info">
+    🕒 Seg: 08:30–11:00, 13:00–17:30 | Ter a Sex: 08:30–11:00, 13:00–18:00<br>
+    🕒 Sáb: 08:00–11:30, 13:00–17:30
+  </div>
 </div>
 
 <div id="form-container">
   <form id="agendaForm">
     
-    <label>💈 Escolha o Profissional</label>
+    <label>💈 Profissional</label>
     <div class="barbeiros-container">
       <div class="card-barbeiro active" onclick="seleccionarBarber('David', this)">
         <img src="https://via.placeholder.com/150/000000/D4AF37?text=D">
@@ -197,19 +81,19 @@ button:hover { transform: scale(1.02); }
     </div>
     <input type="hidden" id="barbeiro" value="David">
 
-    <label>✂️ Selecione o Serviço</label>
+    <label>✂️ Serviço</label>
     <select id="servico" onchange="triggerCargaHoras()">
       <option value="Corte">Corte Masculino — R$40</option>
       <option value="Barba">Barba / Barbaterapia — R$30</option>
       <option value="Corte e Barba">Corte & Barba — R$70</option>
-      <option value="Sobrancelha">Sobrancelha — R$15</option>
+      <option value="Sobrancelha">Sobrancelha — R$10</option>
     </select>
 
     <label>📅 Data do Agendamento</label>
     <input type="date" id="data" required onchange="triggerCargaHoras()">
 
     <label>👤 Seu Nome</label>
-    <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+    <input type="text" id="nome" placeholder="Digite seu nome" required>
 
     <label>📱 Seu WhatsApp</label>
     <input type="tel" inputmode="numeric" id="telefone" placeholder="Ex: 47999999999" required>
@@ -223,7 +107,7 @@ button:hover { transform: scale(1.02); }
   </form>
 
   <div id="confirmacao">
-    Agendamento enviado com sucesso! Redirecionando para o WhatsApp...
+    Agendamento enviado! Redirecionando...
   </div>
 </div>
 
@@ -290,6 +174,7 @@ button:hover { transform: scale(1.02); }
     var ocupados = [];
 
     try {
+      // Petición optimizada asíncrona avanzada
       var respuesta = await fetch(API_URL + "?reservas=1&data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
       ocupados = await respuesta.json();
     } catch (e) {
@@ -309,7 +194,6 @@ button:hover { transform: scale(1.02); }
       opt.value = h;
       opt.text = h;
 
-      // Limpieza de formato para validación exacta
       var estaOcupado = (ocupados.includes(h) || ocupados.includes(h + ":00"));
       var pasoHora = (dataSeleccionada === hoyStr && h <= horaActualStr);
 
@@ -338,7 +222,7 @@ button:hover { transform: scale(1.02); }
     }
 
     if (opcionesValidas === 0) {
-      selectHora.innerHTML = "<option value=''>Sem horários para este serviço</option>";
+      selectHora.innerHTML = "<option value=''>Sem horários disponíveis</option>";
     }
   }
 
@@ -369,30 +253,34 @@ button:hover { transform: scale(1.02); }
         servico: servico,
         barbeiro: barbeiro
       })
-    }).catch(err => console.log("Guardado en proceso..."));
-
-    document.getElementById("confirmacao").style.display = "block";
-    
-    var textoWhatsApp = "Olá David Barbero Studio!%0A%0A" +
-                        "Gostaria de confirmar meu agendamento:%0A" +
-                        "💈 Barbeiro: " + barbeiro + "%0A" +
-                        "✂️ Serviço: " + servico + "%0A" +
-                        "📅 Data: " + data + "%0A" +
-                        "⏰ Hora: " + hora + "%0A" +
-                        "👤 Nome: " + nome;
-    
-    window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
-    
-    document.getElementById("nome").value = "";
-    document.getElementById("telefone").value = "";
-    document.getElementById("hora").selectedIndex = 0;
-    
-    setTimeout(function(){
-      document.getElementById("confirmacao").style.display = "none";
-      triggerCargaHoras();
+    }).then(() => {
+      document.getElementById("confirmacao").style.display = "block";
+      
+      var textoWhatsApp = "Olá David Barbero Studio!%0A%0A" +
+                          "Gostaria de confirmar meu agendamento:%0A" +
+                          "💈 Barbeiro: " + barbeiro + "%0A" +
+                          "✂️ Serviço: " + servico + "%0A" +
+                          "📅 Data: " + data + "%0A" +
+                          "⏰ Hora: " + hora + "%0A" +
+                          "👤 Nome: " + nome;
+      
+      window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
+      
+      document.getElementById("nome").value = "";
+      document.getElementById("telefone").value = "";
+      document.getElementById("hora").selectedIndex = 0;
+      
+      setTimeout(function(){
+        document.getElementById("confirmacao").style.display = "none";
+        triggerCargaHoras();
+        btn.disabled = false;
+        btn.innerText = "Agendar Horário ✅";
+      }, 2000);
+    }).catch(err => {
+      alert("Erro ao agendar. Tente novamente.");
       btn.disabled = false;
       btn.innerText = "Agendar Horário ✅";
-    }, 2000);
+    });
   };
 
 })();
