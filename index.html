@@ -47,7 +47,7 @@ html, body {
 .card-barbeiro span { display: block; margin-top: 6px; font-size: 13px; font-weight: bold; letter-spacing: 1px; color: #ddd; }
 .card-barbeiro.active { border-color: #fdf0cd; background: #0f0e0b; box-shadow: 0 0 10px rgba(197, 160, 89, 0.15); }
 
-/* Escondido en la interfaz visual pero listo en código */
+/* Escondido en la interfaz visual pero listo en código para tus 2 barberos futuros */
 .hidden-barber { display: none; }
 
 label { display: block; text-align: left; margin: 10px 0 5px 2px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; font-weight: 600; color: #8a8a8a; text-transform: uppercase; letter-spacing: 1.5px; }
@@ -135,7 +135,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
 
   const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHurr-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
-  // Función de inicio obligatoria para quitar el loader sin fallas
   window.addEventListener("load", function(){
     setTimeout(function(){
       var loaderEl = document.getElementById("loader");
@@ -177,7 +176,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     return ["08:30","09:00","09:30","10:00","10:30","11:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
   }
 
-    async function carregarHorariosDisponiveis(dataSeleccionada) {
+  async function carregarHorariosDisponiveis(dataSeleccionada) {
     var selectHora = document.getElementById("hora");
     var barbeiro = document.getElementById("barbeiro").value;
     var servico = document.getElementById("servico").value;
@@ -203,7 +202,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       console.log("Error cargando horas.", e);
     }
 
-    // Forzamos a que todas las horas tengan el mismo formato limpio (ej: "08:30")
     var ocupadosNormalizados = ocupados.map(function(h) {
       var t = h.trim().substring(0, 5);
       return (t.length === 4) ? "0" + t : t;
@@ -214,24 +212,19 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     var horaActualStr = String(agora.getHours()).padStart(2, '0') + ":" + String(agora.getMinutes()).padStart(2, '0');
 
     selectHora.innerHTML = "";
-    var opcionesValidas = 0;
 
     for (var i = 0; i < horariosBase.length; i++) {
       var h = horariosBase[i];
-      
-      // Volvemos a formatear la hora base para asegurar que la comparación sea perfecta
       var hNormalizada = (h.length === 4) ? "0" + h : h;
       
       var estaOcupado = ocupadosNormalizados.includes(hNormalizada);
       var pasoHora = (dataSeleccionada === hoyStr && hNormalizada <= horaActualStr);
 
-      // Lógica estricta hacia adelante para Corte e Barba
       var esBloqueOcupado = false;
       if (servico === "Corte e Barba") {
         var proximaHora = (i + 1 < horariosBase.length) ? horariosBase[i + 1] : null;
         var proximaNormalizada = proximaHora ? ((proximaHora.length === 4) ? "0" + proximaHora : proximaHora) : null;
         
-        // Si la hora actual está ocupada, o la siguiente está ocupada, o ya no hay más turnos adelante
         if (estaOcupado || (proximaNormalizada && ocupadosNormalizados.includes(proximaNormalizada)) || !proximaHora) {
           esBloqueOcupado = true;
         }
@@ -241,7 +234,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       opt.value = hNormalizada;
       opt.text = hNormalizada;
 
-      // Aplicar los bloqueos visuales sin usar "continue" (para que no desaparezcan)
       if (pasoHora) {
         opt.disabled = true;
         opt.text = hNormalizada + " (Já passou)";
@@ -251,14 +243,11 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       } else if (estaOcupado) {
         opt.disabled = true;
         opt.text = hNormalizada + " (Ocupado)";
-      } else {
-        opcionesValidas++;
       }
 
       selectHora.add(opt);
     }
 
-        // Contamos cuántas opciones reales quedaron totalmente libres para agendar
     var libresReales = 0;
     var tieneOcupadosOIndisponibles = false;
 
@@ -270,7 +259,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       }
     }
 
-    // Caso 1: No hay absolutamente ningún horario disponible (Agenda llena total)
     if (selectHora.options.length === 0 || (libresReales === 0 && servico !== "Corte e Barba")) {
       selectHora.innerHTML = "";
       var optVacio = document.createElement("option");
@@ -280,7 +268,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       optVacio.selected = true;
       selectHora.add(optVacio);
     } 
-    // Caso 2: Es Corte e Barba y hay horas sueltas, pero ningún bloque doble libre
     else if (servico === "Corte e Barba" && libresReales === 0 && tieneOcupadosOIndisponibles) {
       var optAvisoDobles = document.createElement("option");
       optAvisoDobles.value = "";
@@ -289,7 +276,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       optAvisoDobles.selected = true;
       selectHora.insertBefore(optAvisoDobles, selectHora.firstChild);
     }
-    // Caso 3: Todo está bien y hay horarios disponibles
     else {
       var optSeleccione = document.createElement("option");
       optSeleccione.value = "";
@@ -298,8 +284,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       optSeleccione.selected = true;
       selectHora.insertBefore(optSeleccione, selectHora.firstChild);
     }
-      
-  
+  }
 
   window.solicitarAgendamento = function() {
     var btn = document.getElementById("btnAgendar");
@@ -310,7 +295,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     var barbeiro = document.getElementById("barbeiro").value;
     var servico = document.getElementById("servico").value;
 
-    if (!data || !hora || !nome || !telefone || hora.indexOf("Sem") === 0) {
+    if (!data || !hora || !nome || !telefone) {
       alert("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
@@ -341,13 +326,12 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     }).then(() => {
       document.getElementById("nome").value = "";
       document.getElementById("telefone").value = "";
-      
       triggerCargaHoras();
       document.getElementById("confirmacao").style.display = "none";
       btn.disabled = false;
       btn.innerText = "Agendar Horário ✅";
     }).catch(err => {
-      console.log("Error al guardar de fondo.");
+      console.log("Error al guardar.");
       btn.disabled = false;
       btn.innerText = "Agendar Horário ✅";
     });
