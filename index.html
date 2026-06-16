@@ -90,13 +90,17 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
         <img src="https://images.unsplash.com/photo-1517832606589-7a598b647192?w=150&auto=format&fit=crop&q=60">
         <span>David</span>
       </div>
+      <div class="card-barbeiro" onclick="seleccionarBarber('Disponível', this)">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=60">
+        <span>Barbeiro 2</span>
+      </div>
     </div>
     <input type="hidden" id="barbeiro" value="David">
 
     <label>✂️ Serviço</label>
     <select id="servico" onchange="triggerCargaHoras()">
       <option value="Corte">Corte Masculino — R$40</option>
-      <option value="Barba">Barba / Barbaterapia — R$30</option>
+      <option value="Barba">Barba — R$30</option>
       <option value="Corte e Barba">Corte & Barba — R$70</option>
       <option value="Sobrancelha">Sobrancelha — R$10</option>
     </select>
@@ -192,6 +196,11 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       console.log("Error cargando horas.", e);
     }
 
+    var ocupadosNormalizados = ocupados.map(function(h) {
+      var t = h.trim().substring(0, 5);
+      return (t.length === 4) ? "0" + t : t;
+    });
+
     var agora = new Date();
     var hoyStr = agora.getFullYear() + "-" + String(agora.getMonth() + 1).padStart(2, '0') + "-" + String(agora.getDate()).padStart(2, '0');
     var horaActualStr = String(agora.getHours()).padStart(2, '0') + ":" + String(agora.getMinutes()).padStart(2, '0');
@@ -205,14 +214,15 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       opt.value = h;
       opt.text = h;
 
-      var estaOcupado = (ocupados.includes(h) || ocupados.includes(h + ":00"));
+      var estaOcupado = ocupadosNormalizados.includes(h);
       var pasoHora = (dataSeleccionada === hoyStr && h <= horaActualStr);
 
+      // LÓGICA DE DOBLE TURNO HACIA ADELANTE CORREGIDA
       if (servico === "Corte e Barba" && !estaOcupado && !pasoHora) {
         if (i + 1 < horariosBase.length) {
-          var siguienteHora = horariosBase[i + 1];
-          if (ocupados.includes(siguienteHora) || ocupados.includes(siguienteHora + ":00")) {
-            estaOcupado = true;
+          var horaSiguiente = horariosBase[i + 1];
+          if (ocupadosNormalizados.includes(horaSiguiente)) {
+            estaOcupado = true; 
           }
         } else {
           estaOcupado = true;
@@ -251,10 +261,8 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       return;
     }
 
-    // 1. DISPARAR WHATSAPP DE INMEDIATO EN EL MILISEGUNDO 1
-    var textoWhatsApp = "Olá David Barbero Studio!%0A%0A" +
-                        "Gostaria de confirmar meu agendamento:%0A" +
-                        "💈 Barbeiro: " + barbeiro + "%0A" +
+    var textoWhatsApp = "Olá " + barbeiro + "!%0A%0A" +
+                        "Gostaria de confirmar meu agendamento no David Barber Studio:%0A" +
                         "✂️ Serviço: " + servico + "%0A" +
                         "📅 Data: " + data + "%0A" +
                         "⏰ Hora: " + hora + "%0A" +
@@ -262,12 +270,10 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     
     window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
 
-    // 2. CAMBIAR BOTÓN MIENTRAS SE GUARDA EN SEGUNDO PLANO
     btn.disabled = true;
     btn.innerText = "Enviando para o Sheets... ⌛";
     document.getElementById("confirmacao").style.display = "block";
 
-    // 3. ENVIAR A GOOGLE SHEETS EN SEGUNDO PLANO
     fetch(API_URL, {
       method: "POST",
       body: new URLSearchParams({
@@ -279,7 +285,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
         barbeiro: barbeiro
       })
     }).then(() => {
-      // Limpieza silenciosa de los campos
       document.getElementById("nome").value = "";
       document.getElementById("telefone").value = "";
       document.getElementById("hora").selectedIndex = 0;
@@ -289,7 +294,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       btn.disabled = false;
       btn.innerText = "Agendar Horário ✅";
     }).catch(err => {
-      console.log("Error al guardar de fondo, pero el cliente ya fue enviado a WhatsApp.");
+      console.log("Error al guardar de fondo.");
       btn.disabled = false;
       btn.innerText = "Agendar Horário ✅";
     });
