@@ -11,31 +11,60 @@ html, body {
   margin: 0; padding: 0; width: 100%; height: 100%;
   background-color: #000000; font-family: 'Segoe UI', Arial, sans-serif; color: #f5f5f5;
   display: flex; flex-direction: column; justify-content: flex-start; align-items: center; box-sizing: border-box;
+  position: relative;
 }
 
-/* Loader Premium */
+/* LOGO DE FONDO (Marca de agua opaca que no estorba) */
+body::before {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85vw;
+  max-width: 450px;
+  height: 85vw;
+  max-height: 450px;
+  background-image: url("https://i.ibb.co/dwr5njh3/1781201485738.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.07; /* Super opaca para que no moleste en los campos */
+  filter: blur(1px); /* Desenfoque sutil para mayor elegancia */
+  z-index: 0;
+  pointer-events: none; /* Evita que interfiera con los clics */
+}
+
+/* Loader Premium con tu Logo */
 #loader {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000000;
   display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999;
 }
+.loader-logo {
+  width: 130px; height: auto; margin-bottom: 15px;
+  filter: drop-shadow(0 0 8px rgba(197,160,89,0.5));
+}
 .loader-title {
-  font-family: 'Times New Roman', Georgia, serif; font-size: 24px; font-weight: bold; letter-spacing: 4px;
+  font-family: 'Times New Roman', Georgia, serif; font-size: 22px; font-weight: bold; letter-spacing: 4px;
   background: linear-gradient(90deg, #b39210, #f8e48d, #b39210); background-size: 200%;
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.loader-bar { width: 150px; height: 2px; background: #1a1a1a; margin-top: 15px; border-radius: 10px; overflow: hidden; }
+.loader-bar { width: 150px; height: 2px; background: #1a1a1a; margin-top: 20px; border-radius: 10px; overflow: hidden; }
 .loader-bar span { display: block; height: 100%; width: 0%; background: #D4AF37; animation: loading 0.6s forwards; }
 @keyframes loading { 100% { width: 100%; } }
 
-/* Contenedor Principal con Efecto Neón Dorado Suave */
+/* Contenedor Principal */
 #form-container {
+  position: relative;
+  z-index: 1; /* Por encima del fondo opaco */
   width: 92%; max-width: 400px; padding: 25px 20px; border-radius: 12px; margin: 20px 0;
-  background: #070707; border: 1px solid #c5a059; 
+  background: rgba(7, 7, 7, 0.9); /* Un toque de transparencia para integrar el fondo */
+  border: 1px solid #c5a059; 
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 15px rgba(197, 160, 89, 0.15); box-sizing: border-box;
   text-align: center;
 }
 
-/* Ajuste de Logo Oficial */
+/* Logo Oficial en el Formulario */
 .brand-logo {
   width: 120px; height: auto; margin-bottom: 12px; 
   filter: drop-shadow(0 0 6px rgba(197,160,89,0.4));
@@ -49,7 +78,7 @@ html, body {
 .slogan { font-size: 10px; color: #ffffff; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 12px; opacity: 0.9; }
 .horarios-info { font-size: 10px; color: #c5a059; line-height: 1.5; opacity: 0.85; margin-bottom: 15px; border-bottom: 1px dashed #2c2514; padding-bottom: 15px; }
 
-/* Tarjetas de Barberos Premium */
+/* Tarjetas de Barberos */
 .barbeiros-container { display: flex; justify-content: center; gap: 12px; margin: 5px 0 15px 0; }
 .card-barbeiro { background: #000000; border-radius: 8px; padding: 12px; width: 110px; cursor: pointer; transition: 0.3s; border: 1px solid #222222; text-align: center; }
 .card-barbeiro img { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2px solid #c5a059; transition: 0.3s; }
@@ -75,6 +104,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 <body>
 
 <div id="loader">
+  <img src="https://i.ibb.co/dwr5njh3/1781201485738.png" alt="Logo David Barber Studio" class="loader-logo">
   <div class="loader-title">DAVID BARBER STUDIO</div>
   <div class="loader-bar"><span></span></div>
 </div>
@@ -137,7 +167,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
   window.addEventListener("load", function(){
     setTimeout(function(){
       document.getElementById("loader").style.display = "none";
-    }, 600);
+    }, 900); // Un pelín más de tiempo para que se aprecie bien el logo al cargar
     
     var hoje = new Date();
     var mes = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -211,11 +241,9 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
       var estaOcupado = bloquesOcupados.includes(h);
       var esIndisponivel = false;
 
-      // EXCEPCIONES DE ÚLTIMA HORA (Lunes a Viernes 11:00 y Sábado 11:30)
       var esUltimaHoraManana = (diaSemana === 6 && h === "11:30") || (diaSemana !== 6 && h === "11:00");
       var esUltimaHoraTarde = ((diaSemana === 1 || diaSemana === 6) && h === "17:30") || (diaSemana > 1 && diaSemana < 6 && h === "18:00");
 
-      // LÓGICA DE BLOQUEO DE 2 HORAS PARA CORTE Y BARBA
       var bloquesNecesarios = (servico === "Corte e Barba" && !esUltimaHoraManana && !esUltimaHoraTarde) ? 2 : 1;
 
       for (var b = 0; b < bloquesNecesarios; b++) {
