@@ -131,7 +131,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
 (function(){
   "use strict";
 
-  // URL de tu Apps Script ya integrada directamente
+  // URL de tu Apps Script integrada
   const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHurr-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
   window.addEventListener("load", function(){
@@ -195,18 +195,18 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     var ocupados = [];
 
     try {
-      var respuesta = await fetch(API_URL + "?reservas=1&data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
-      ocupados = await respuesta.json(); // Trae [{hora: "09:00", bloques: 2}] según la pestaña Serviço de tu Sheets
+      var respuesta = await fetch(API_URL + "?data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
+      ocupados = await respuesta.json(); 
     } catch (e) {
       console.log("Error cargando horas.", e);
     }
 
-    // LÓGICA DE MAPEO DE RESERVAS PREVIAS CON SUS RESPECTIVOS BLOQUES
+    // MAPEO CORRECTO DE BLOQUES OCUPADOS EN LA JORNADA
     var bloquesOcupadosEnBase = [];
     
     ocupados.forEach(function(item) {
-      var hItem = (typeof item === 'object' && item !== null) ? (item.hora || "") : item;
-      var bloquesAnteriores = (typeof item === 'object' && item !== null) ? (parseInt(item.bloques) || 1) : 1;
+      var hItem = item.hora || "";
+      var bloquesAnteriores = parseInt(item.bloques) || 1;
       
       var t = hItem.toString().trim().substring(0, 5);
       var horaNorm = (t.length === 4) ? "0" + t : t;
@@ -214,7 +214,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       var idxOriginal = horariosBase.indexOf(t);
       if (idxOriginal === -1) idxOriginal = horariosBase.indexOf(horaNorm);
       
-      // Bloqueamos tantos tramos de 30 minutos como indique la duración guardada en el Sheets
       if (idxOriginal !== -1) {
         for (var bAnt = 0; bAnt < bloquesAnteriores; bAnt++) {
           var indexBloqueBase = idxOriginal + bAnt;
@@ -235,7 +234,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
 
     selectHora.innerHTML = "";
 
-    // EVALUACIÓN DEL CLIENTE ACTUAL: Si elige "Corte e Barba" necesita 2 bloques consecuentes
+    // EVALUACIÓN DE BLOQUES CONSECUTIVOS PARA EL CLIENTE ACTUAL
     var bloquesNecesariosCliente = (servico === "Corte e Barba") ? 2 : 1;
 
     for (var i = 0; i < horariosBase.length; i++) {
@@ -246,12 +245,11 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       var estaOcupado = false;
       var esIndisponivel = false;
 
-      // Verificamos secuencialmente los bloques necesarios hacia adelante
       for (var b = 0; b < bloquesNecesariosCliente; b++) {
         var indexEval = i + b;
         
         if (indexEval >= horariosBase.length) {
-          esIndisponivel = true; // Si el servicio de 2 bloques pasa del fin de la jornada laboral
+          esIndisponivel = true; 
           break;
         }
         
@@ -260,9 +258,9 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
         
         if (bloquesOcupadosEnBase.includes(horaValidarNorm)) {
           if (b === 0) {
-            estaOcupado = true; // El bloque de inicio seleccionado está tomado
+            estaOcupado = true; 
           } else {
-            esIndisponivel = true; // El bloque consecutivo está tomado, cortando el tiempo necesario
+            esIndisponivel = true; 
           }
           break;
         }
@@ -270,9 +268,8 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
 
       var opt = document.createElement("option");
       opt.value = hNormalizada;
-      opt.text = hNormalizada;
 
-      // Aplicación limpia de estados visuales correspondientes
+      // MENSAJES Y FILTROS EN PORTUGUÉS PARA EL CLIENTE
       if (pasoHora) {
         opt.disabled = true;
         opt.text = hNormalizada + " (Já passou)";
@@ -282,12 +279,13 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       } else if (esIndisponivel) {
         opt.disabled = true;
         opt.text = hNormalizada + " (Indisponível p/ este serviço)";
+      } else {
+        opt.text = hNormalizada;
       }
 
       selectHora.add(opt);
     }
 
-    // Conteo y formateo del estado de disponibilidad final de la lista
     var libresReales = 0;
     var tieneBloqueos = false;
     for (var j = 0; j < selectHora.options.length; j++) {
