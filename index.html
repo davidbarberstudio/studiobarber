@@ -258,14 +258,47 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       selectHora.add(opt);
     }
 
-    if (opcionesValidas === 0) {
-      // Si por alguna razón todo el día está lleno, dejamos un aviso claro
-      var optAviso = document.createElement("option");
-      optAviso.text = "Sem horários disponíveis para hoje";
-      optAviso.disabled = true;
-      selectHora.insertBefore(optAviso, selectHora.firstChild);
+        // Contamos cuántas opciones reales quedaron totalmente libres para agendar
+    var libresReales = 0;
+    var tieneOcupadosOIndisponibles = false;
+
+    for (var j = 0; j < selectHora.options.length; j++) {
+      if (!selectHora.options[j].disabled) {
+        libresReales++;
+      } else {
+        tieneOcupadosOIndisponibles = true;
+      }
     }
+
+    // Caso 1: No hay absolutamente ningún horario disponible (Agenda llena total)
+    if (selectHora.options.length === 0 || (libresReales === 0 && servico !== "Corte e Barba")) {
+      selectHora.innerHTML = "";
+      var optVacio = document.createElement("option");
+      optVacio.value = "";
+      optVacio.text = "⚠️ Agenda cheia, escolha outra data";
+      optVacio.disabled = true;
+      optVacio.selected = true;
+      selectHora.add(optVacio);
+    } 
+    // Caso 2: Es Corte e Barba y hay horas sueltas, pero ningún bloque doble libre
+    else if (servico === "Corte e Barba" && libresReales === 0 && tieneOcupadosOIndisponibles) {
+      var optAvisoDobles = document.createElement("option");
+      optAvisoDobles.value = "";
+      optAvisoDobles.text = "⚠️ Sem blocos para este serviço";
+      optAvisoDobles.disabled = true;
+      optAvisoDobles.selected = true;
+      selectHora.insertBefore(optAvisoDobles, selectHora.firstChild);
     }
+    // Caso 3: Todo está bien y hay horarios disponibles
+    else {
+      var optSeleccione = document.createElement("option");
+      optSeleccione.value = "";
+      optSeleccione.text = "Selecione o seu horário...";
+      optSeleccione.disabled = true;
+      optSeleccione.selected = true;
+      selectHora.insertBefore(optSeleccione, selectHora.firstChild);
+    }
+      
   
 
   window.solicitarAgendamento = function() {
