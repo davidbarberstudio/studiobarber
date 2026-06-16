@@ -177,7 +177,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     return ["08:30","09:00","09:30","10:00","10:30","11:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
   }
 
-  async function carregarHorariosDisponiveis(dataSeleccionada) {
+    async function carregarHorariosDisponiveis(dataSeleccionada) {
     var selectHora = document.getElementById("hora");
     var barbeiro = document.getElementById("barbeiro").value;
     var servico = document.getElementById("servico").value;
@@ -203,6 +203,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       console.log("Error cargando horas.", e);
     }
 
+    // Forzamos a que todas las horas tengan el mismo formato limpio (ej: "08:30")
     var ocupadosNormalizados = ocupados.map(function(h) {
       var t = h.trim().substring(0, 5);
       return (t.length === 4) ? "0" + t : t;
@@ -216,43 +217,56 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     var opcionesValidas = 0;
 
     for (var i = 0; i < horariosBase.length; i++) {
-  var h = horariosBase[i];
-  var estaOcupado = ocupadosNormalizados.includes(h);
-  var pasoHora = (dataSeleccionada === hoyStr && h <= horaActualStr);
-  
-  // LÓGICA ESTRICTA HACIA ADELANTE: Si la actual o la siguiente están llenas, no se muestra
-  if (servico === "Corte e Barba") {
-    var proximaHora = (i + 1 < horariosBase.length) ? horariosBase[i + 1] : null;
-    var proximaOcupada = proximaHora ? ocupadosNormalizados.includes(proximaHora) : true;
-    
-    if (estaOcupado || proximaOcupada) {
-      continue; // Salta la hora completa, no la deja elegir en el select
-    }
-  } else {
-    if (estaOcupado) {
-      continue; // Si es servicio normal y está ocupado, se oculta
-    }
-  }
+      var h = horariosBase[i];
+      
+      // Volvemos a formatear la hora base para asegurar que la comparación sea perfecta
+      var hNormalizada = (h.length === 4) ? "0" + h : h;
+      
+      var estaOcupado = ocupadosNormalizados.includes(hNormalizada);
+      var pasoHora = (dataSeleccionada === hoyStr && hNormalizada <= horaActualStr);
 
-  var opt = document.createElement("option");
-  opt.value = h;
-  opt.text = h;
+      // Lógica estricta hacia adelante para Corte e Barba
+      var esBloqueOcupado = false;
+      if (servico === "Corte e Barba") {
+        var proximaHora = (i + 1 < horariosBase.length) ? horariosBase[i + 1] : null;
+        var proximaNormalizada = proximaHora ? ((proximaHora.length === 4) ? "0" + proximaHora : proximaHora) : null;
+        
+        // Si la hora actual está ocupada, o la siguiente está ocupada, o ya no hay más turnos adelante
+        if (estaOcupado || (proximaNormalizada && ocupadosNormalizados.includes(proximaNormalizada)) || !proximaHora) {
+          esBloqueOcupado = true;
+        }
+      }
 
-  if (pasoHora) {
-    opt.disabled = true;
-    opt.text = h + " (Já passou)";
-  } else {
-    opcionesValidas++;
-  }
+      var opt = document.createElement("option");
+      opt.value = hNormalizada;
+      opt.text = hNormalizada;
 
-  selectHora.add(opt);
+      // Aplicar los bloqueos visuales sin usar "continue" (para que no desaparezcan)
+      if (pasoHora) {
+        opt.disabled = true;
+        opt.text = hNormalizada + " (Já passou)";
+      } else if (servico === "Corte e Barba" && esBloqueOcupado) {
+        opt.disabled = true;
+        opt.text = hNormalizada + " (Indisponível p/ este serviço)";
+      } else if (estaOcupado) {
+        opt.disabled = true;
+        opt.text = hNormalizada + " (Ocupado)";
+      } else {
+        opcionesValidas++;
+      }
+
+      selectHora.add(opt);
     }
-    
 
     if (opcionesValidas === 0) {
-      selectHora.innerHTML = "<option value=''>Sem horários disponíveis</option>";
+      // Si por alguna razón todo el día está lleno, dejamos un aviso claro
+      var optAviso = document.createElement("option");
+      optAviso.text = "Sem horários disponíveis para hoje";
+      optAviso.disabled = true;
+      selectHora.insertBefore(optAviso, selectHora.firstChild);
     }
-  }
+    }
+  
 
   window.solicitarAgendamento = function() {
     var btn = document.getElementById("btnAgendar");
