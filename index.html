@@ -12,52 +12,86 @@ html, body {
   overflow-x: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box;
 }
 
-/* Loader */
-#loader { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; }
-.loader-title { font-size: 24px; font-weight: bold; letter-spacing: 4px; background: linear-gradient(90deg, #b39210, #f8e48d, #b39210); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+/* Loader elegante de bienvenida */
+#loader {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000;
+  display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999;
+}
+.loader-title {
+  font-size: 24px; font-weight: bold; letter-spacing: 4px;
+  background: linear-gradient(90deg, #b39210, #f8e48d, #b39210); background-size: 200%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
 .loader-bar { width: 150px; height: 2px; background: #1a1a1a; margin-top: 15px; border-radius: 10px; overflow: hidden; }
 .loader-bar span { display: block; height: 100%; width: 0%; background: #D4AF37; animation: loading 1s forwards; }
 @keyframes loading { 100% { width: 100%; } }
 
 .header-container { margin-bottom: 15px; text-align: center; padding: 0 10px; }
-.titulo { font-size: 28px; font-weight: bold; letter-spacing: 2px; background: linear-gradient(135deg, #c5a059 0%, #fdf0cd 50%, #c5a059 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.titulo {
+  font-size: 28px; font-weight: bold; letter-spacing: 2px; margin: 0 0 4px 0;
+  background: linear-gradient(135deg, #c5a059 0%, #fdf0cd 50%, #c5a059 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
 .slogan { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; color: #ffffff; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; opacity: 0.9; }
+.horarios-info { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; color: #c5a059; line-height: 1.4; opacity: 0.8; }
 
-#form-container { width: 92%; max-width: 390px; padding: 20px; border-radius: 8px; background: #070707; border: 1px solid #2c2514; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); box-sizing: border-box; }
+#form-container {
+  width: 92%; max-width: 390px; padding: 20px; border-radius: 8px;
+  background: #070707; border: 1px solid #2c2514; 
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(197, 160, 89, 0.05); box-sizing: border-box;
+}
 
 .barbeiros-container { display: flex; justify-content: center; gap: 10px; margin: 5px 0 15px 0; }
-.card-barbeiro { background: #000; border-radius: 4px; padding: 10px; width: 100px; cursor: pointer; border: 1px solid #222; text-align: center; }
-.card-barbeiro.active { border-color: #fdf0cd; background: #0f0e0b; }
+.card-barbeiro { background: #000; border-radius: 4px; padding: 10px; width: 100px; cursor: pointer; transition: 0.3s; border: 1px solid #222; text-align: center; }
 .card-barbeiro img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid #c5a059; }
-.card-barbeiro span { display: block; margin-top: 6px; font-size: 13px; font-weight: bold; color: #ddd; }
+.card-barbeiro span { display: block; margin-top: 6px; font-size: 13px; font-weight: bold; letter-spacing: 1px; color: #ddd; }
+.card-barbeiro.active { border-color: #fdf0cd; background: #0f0e0b; box-shadow: 0 0 10px rgba(197, 160, 89, 0.15); }
 
-/* Para esconder el 2do barbero temporalmente */
+/* Escondido en la interfaz visual pero listo en código */
 .hidden-barber { display: none; }
 
 label { display: block; text-align: left; margin: 10px 0 5px 2px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; font-weight: 600; color: #8a8a8a; text-transform: uppercase; letter-spacing: 1.5px; }
-select, input { width: 100%; padding: 12px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #2a2a2a; background: #000000; color: #ffffff; font-size: 14px; box-sizing: border-box; }
-button { background: linear-gradient(135deg, #967433 0%, #c5a059 50%, #fdf0cd 100%); color: #000000; border: none; padding: 14px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 20px; width: 100%; text-transform: uppercase; letter-spacing: 2px; }
+select, input { width: 100%; padding: 12px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #2a2a2a; background: #000000; color: #ffffff; font-size: 14px; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; transition: 0.2s; }
+select:focus, input:focus { outline: none; border-color: #c5a059; box-shadow: 0 0 5px rgba(197, 160, 89, 0.2); }
+
+button { 
+  background: linear-gradient(135deg, #967433 0%, #c5a059 50%, #fdf0cd 100%); 
+  color: #000000; border: none; padding: 14px; font-size: 13px; font-weight: bold; 
+  border-radius: 4px; cursor: pointer; margin-top: 20px; width: 100%; 
+  transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+button:active { transform: scale(0.98); }
+button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow: none; }
+
 #confirmacao { display: none; margin-top: 15px; color: #fdf0cd; font-size: 13px; font-family: 'Segoe UI', Arial, sans-serif; background: #110f0a; padding: 12px; border-radius: 4px; border: 1px solid #c5a059; text-align: center; }
 </style>
 </head>
 <body>
 
-<div id="loader"><div class="loader-title">DAVID BARBER STUDIO</div><div class="loader-bar"><span></span></div></div>
+<div id="loader">
+  <div class="loader-title">DAVID BARBER STUDIO</div>
+  <div class="loader-bar"><span></span></div>
+</div>
 
 <div class="header-container">
   <div class="titulo">DAVID BARBER STUDIO</div>
   <div class="slogan">Estilo, Precisão e Confiança</div>
+  <div class="horarios-info">
+    🕒 Seg: 08:30–11:00, 13:00–17:30 | Ter a Sex: 08:30–11:00, 13:00–18:00<br>
+    🕒 Sáb: 08:00–11:30, 13:00–17:30
+  </div>
 </div>
 
 <div id="form-container">
   <form id="agendaForm">
+    
     <label>💈 Profissional</label>
     <div class="barbeiros-container">
       <div class="card-barbeiro active" onclick="seleccionarBarber('David', this)">
         <img src="https://images.unsplash.com/photo-1517832606589-7a598b647192?w=150&auto=format&fit=crop&q=60">
         <span>David</span>
       </div>
-      <!-- Solo quita la clase hidden-barber cuando contrates al 2do -->
       <div class="card-barbeiro hidden-barber" onclick="seleccionarBarber('Barbeiro 2', this)">
         <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=60">
         <span>Barbeiro 2</span>
@@ -73,89 +107,204 @@ button { background: linear-gradient(135deg, #967433 0%, #c5a059 50%, #fdf0cd 10
       <option value="Sobrancelha">Sobrancelha — R$10</option>
     </select>
 
-    <label>📅 Data</label>
+    <label>📅 Data do Agendamento</label>
     <input type="date" id="data" required onchange="triggerCargaHoras()">
-    <label>👤 Nome</label>
-    <input type="text" id="nome" placeholder="Seu nome" required>
-    <label>📱 WhatsApp</label>
-    <input type="tel" id="telefone" placeholder="Seu número" required>
-    <label>⏰ Horários</label>
-    <select id="hora" required></select>
+
+    <label>👤 Seu Nome</label>
+    <input type="text" id="nome" placeholder="Digite seu nome" required>
+
+    <label>📱 Seu WhatsApp</label>
+    <input type="tel" inputmode="numeric" id="telefone" placeholder="Ex: 47999999999" required>
+
+    <label>⏰ Horários Disponíveis</label>
+    <select id="hora" required>
+      <option value="">Selecione a data primeiro...</option>
+    </select>
+    
     <button type="button" id="btnAgendar" onclick="solicitarAgendamento()">Agendar Horário ✅</button>
   </form>
-  <div id="confirmacao">Enviando...</div>
+
+  <div id="confirmacao">
+    Agendamento enviado! Redirecionando...
+  </div>
 </div>
 
 <script>
 (function(){
   "use strict";
+
   const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHurr-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
-  window.seleccionarBarber = function(nome, el) {
+  // Función de inicio obligatoria para quitar el loader sin fallas
+  window.addEventListener("load", function(){
+    setTimeout(function(){
+      var loaderEl = document.getElementById("loader");
+      if(loaderEl) loaderEl.style.display = "none";
+    }, 800);
+    
+    var hoje = new Date();
+    var mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    var dia = String(hoje.getDate()).padStart(2, '0');
+    var dataInput = document.getElementById("data");
+    if(dataInput) {
+      dataInput.min = hoje.getFullYear() + "-" + mes + "-" + dia;
+    }
+  });
+
+  window.seleccionarBarber = function(nome, elemento) {
     document.getElementById("barbeiro").value = nome;
-    document.querySelectorAll(".card-barbeiro").forEach(c => c.classList.remove("active"));
-    el.classList.add("active");
+    var cards = document.querySelectorAll(".card-barbeiro");
+    cards.forEach(c => c.classList.remove("active"));
+    elemento.classList.add("active");
     triggerCargaHoras();
   };
 
   window.triggerCargaHoras = function() {
-    var d = document.getElementById("data").value;
-    if(d) carregarHorariosDisponiveis(d);
+    var dataVal = document.getElementById("data").value;
+    if (dataVal) {
+      carregarHorariosDisponiveis(dataVal);
+    }
   };
+
+  function obtenerMatrizHorarios(diaSemana) {
+    if (diaSemana === 0) return [];
+    if (diaSemana === 1) {
+      return ["08:30","09:00","09:30","10:00","10:30","11:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30"];
+    }
+    if (diaSemana === 6) {
+      return ["08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30"];
+    }
+    return ["08:30","09:00","09:30","10:00","10:30","11:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
+  }
 
   async function carregarHorariosDisponiveis(dataSeleccionada) {
     var selectHora = document.getElementById("hora");
-    var servico = document.getElementById("servico").value;
     var barbeiro = document.getElementById("barbeiro").value;
-    
-    var horariosBase = ["08:30","09:00","09:30","10:00","10:30","11:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
+    var servico = document.getElementById("servico").value;
+
+    selectHora.innerHTML = "<option value=''>Carregando horários...</option>";
+
+    var partes = dataSeleccionada.split("-");
+    var dateObj = new Date(partes[0], partes[1] - 1, partes[2]);
+    var diaSemana = dateObj.getDay();
+
+    if (diaSemana === 0) {
+      selectHora.innerHTML = "<option value=''>Fechado aos Domingos</option>";
+      return;
+    }
+
+    var horariosBase = obtenerMatrizHorarios(diaSemana);
     var ocupados = [];
-    
+
     try {
-      var res = await fetch(API_URL + "?reservas=1&data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
-      ocupados = await res.json();
-    } catch(e){}
+      var respuesta = await fetch(API_URL + "?reservas=1&data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
+      ocupados = await respuesta.json();
+    } catch (e) {
+      console.log("Error cargando horas.", e);
+    }
+
+    var ocupadosNormalizados = ocupados.map(function(h) {
+      var t = h.trim().substring(0, 5);
+      return (t.length === 4) ? "0" + t : t;
+    });
+
+    var agora = new Date();
+    var hoyStr = agora.getFullYear() + "-" + String(agora.getMonth() + 1).padStart(2, '0') + "-" + String(agora.getDate()).padStart(2, '0');
+    var horaActualStr = String(agora.getHours()).padStart(2, '0') + ":" + String(agora.getMinutes()).padStart(2, '0');
 
     selectHora.innerHTML = "";
-    
+    var opcionesValidas = 0;
+
     for (var i = 0; i < horariosBase.length; i++) {
       var h = horariosBase[i];
-      var estaOcupado = ocupados.includes(h);
-      
-      // Lógica estricta: si es Corte e Barba, bloquea si la actual O la siguiente está ocupada
+      var estaOcupado = ocupadosNormalizados.includes(h);
+      var pasoHora = (dataSeleccionada === hoyStr && h <= horaActualStr);
+
+      // LÓGICA ESTRICTA HACIA ADELANTE: Si la actual o la siguiente están llenas, no se muestra
       if (servico === "Corte e Barba") {
-        if (estaOcupado || (i + 1 < horariosBase.length && ocupados.includes(horariosBase[i+1]))) {
-            continue; // Saltamos este horario, no lo agregamos al select
+        var proximaHora = (i + 1 < horariosBase.length) ? horariosBase[i + 1] : null;
+        var proximaOcupada = proximaHora ? ocupadosNormalizados.includes(proximaHora) : true;
+        
+        if (estaOcupado || proximaOcupada) {
+          continue; // Salta la hora completa, no la deja elegir en el select
         }
       } else {
-        if (estaOcupado) continue;
+        if (estaOcupado) {
+          continue; // Si es servicio normal y está ocupado, se oculta
+        }
       }
 
       var opt = document.createElement("option");
       opt.value = h;
       opt.text = h;
+
+      if (pasoHora) {
+        opt.disabled = true;
+        opt.text = h + " (Já passou)";
+      } else {
+        opcionesValidas++;
+      }
+
       selectHora.add(opt);
     }
-    
-    if(selectHora.options.length === 0) selectHora.innerHTML = "<option>Sem horários</option>";
+
+    if (opcionesValidas === 0) {
+      selectHora.innerHTML = "<option value=''>Sem horários disponíveis</option>";
+    }
   }
 
   window.solicitarAgendamento = function() {
-    var d = document.getElementById("data").value;
-    var h = document.getElementById("hora").value;
-    var n = document.getElementById("nome").value;
-    var t = document.getElementById("telefone").value;
-    var b = document.getElementById("barbeiro").value;
-    var s = document.getElementById("servico").value;
+    var btn = document.getElementById("btnAgendar");
+    var data = document.getElementById("data").value;
+    var hora = document.getElementById("hora").value;
+    var nome = document.getElementById("nome").value.trim();
+    var telefone = document.getElementById("telefone").value.trim();
+    var barbeiro = document.getElementById("barbeiro").value;
+    var servico = document.getElementById("servico").value;
 
-    if(!d || !h || !n || !t) return alert("Preencha tudo!");
+    if (!data || !hora || !nome || !telefone || hora.indexOf("Sem") === 0) {
+      alert("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    var textoWhatsApp = "Olá " + barbeiro + "!%0A%0A" +
+                        "Gostaria de confirmar meu agendamento no David Barber Studio:%0A" +
+                        "✂️ Serviço: " + servico + "%0A" +
+                        "📅 Data: " + data + "%0A" +
+                        "⏰ Hora: " + hora + "%0A" +
+                        "👤 Nome: " + nome;
     
-    var msg = "Olá " + b + ", quero agendar no David Barber Studio:%0A" + s + "%0AData: " + d + "%0AHora: " + h + "%0ANome: " + n;
-    window.open("https://wa.me/5595991554792?text=" + msg, "_blank");
-    
-    fetch(API_URL, { method: "POST", body: new URLSearchParams({data:d, hora:h, cliente:n, telefone:t, servico:s, barbero:b}) })
-    .then(() => alert("Agendado!"));
+    window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
+
+    btn.disabled = true;
+    btn.innerText = "Enviando para o Sheets... ⌛";
+    document.getElementById("confirmacao").style.display = "block";
+
+    fetch(API_URL, {
+      method: "POST",
+      body: new URLSearchParams({
+        data: data,
+        hora: hora,
+        cliente: nome,
+        telefone: telefone,
+        servico: servico,
+        barbeiro: barbeiro
+      })
+    }).then(() => {
+      document.getElementById("nome").value = "";
+      document.getElementById("telefone").value = "";
+      
+      triggerCargaHoras();
+      document.getElementById("confirmacao").style.display = "none";
+      btn.disabled = false;
+      btn.innerText = "Agendar Horário ✅";
+    }).catch(err => {
+      console.log("Error al guardar de fondo.");
+      btn.disabled = false;
+      btn.innerText = "Agendar Horário ✅";
+    });
   };
+
 })();
 </script>
 </body>
