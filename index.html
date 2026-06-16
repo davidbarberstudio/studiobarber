@@ -216,37 +216,38 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     var opcionesValidas = 0;
 
     for (var i = 0; i < horariosBase.length; i++) {
-      var h = horariosBase[i];
-      var estaOcupado = ocupadosNormalizados.includes(h);
-      var pasoHora = (dataSeleccionada === hoyStr && h <= horaActualStr);
-
-      // LÓGICA ESTRICTA HACIA ADELANTE: Si la actual o la siguiente están llenas, no se muestra
-      if (servico === "Corte e Barba") {
-        var proximaHora = (i + 1 < horariosBase.length) ? horariosBase[i + 1] : null;
-        var proximaOcupada = proximaHora ? ocupadosNormalizados.includes(proximaHora) : true;
-        
-        if (estaOcupado || proximaOcupada) {
-          continue; // Salta la hora completa, no la deja elegir en el select
-        }
-      } else {
-        if (estaOcupado) {
-          continue; // Si es servicio normal y está ocupado, se oculta
-        }
-      }
-
-      var opt = document.createElement("option");
-      opt.value = h;
-      opt.text = h;
-
-      if (pasoHora) {
-        opt.disabled = true;
-        opt.text = h + " (Já passou)";
-      } else {
-        opcionesValidas++;
-      }
-
-      selectHora.add(opt);
+  var h = horariosBase[i];
+  var estaOcupado = ocupadosNormalizados.includes(h);
+  var pasoHora = (dataSeleccionada === hoyStr && h <= horaActualStr);
+  
+  // LÓGICA ESTRICTA HACIA ADELANTE: Si la actual o la siguiente están llenas, no se muestra
+  if (servico === "Corte e Barba") {
+    var proximaHora = (i + 1 < horariosBase.length) ? horariosBase[i + 1] : null;
+    var proximaOcupada = proximaHora ? ocupadosNormalizados.includes(proximaHora) : true;
+    
+    if (estaOcupado || proximaOcupada) {
+      continue; // Salta la hora completa, no la deja elegir en el select
     }
+  } else {
+    if (estaOcupado) {
+      continue; // Si es servicio normal y está ocupado, se oculta
+    }
+  }
+
+  var opt = document.createElement("option");
+  opt.value = h;
+  opt.text = h;
+
+  if (pasoHora) {
+    opt.disabled = true;
+    opt.text = h + " (Já passou)";
+  } else {
+    opcionesValidas++;
+  }
+
+  selectHora.add(opt);
+    }
+    
 
     if (opcionesValidas === 0) {
       selectHora.innerHTML = "<option value=''>Sem horários disponíveis</option>";
