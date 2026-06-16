@@ -322,19 +322,12 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       return;
     }
 
-    var textoWhatsApp = "Olá " + barbeiro + "!%0A%0A" +
-                        "Gostaria de confirmar meu agendamento no David Barber Studio:%0A" +
-                        "✂️ Serviço: " + servico + "%0A" +
-                        "📅 Data: " + data + "%0A" +
-                        "⏰ Hora: " + hora + "%0A" +
-                        "👤 Nome: " + nome;
-    
-    window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
-
+    // Deshabilitamos el botón de inmediato para evitar que hagan doble clic
     btn.disabled = true;
     btn.innerText = "Enviando para o Sheets... ⌛";
     document.getElementById("confirmacao").style.display = "block";
 
+    // 1. PRIMERO GUARDAMOS EN EL SHEETS (PROCESO EN SEGUNDO PLANO)
     fetch(API_URL, {
       method: "POST",
       body: new URLSearchParams({
@@ -345,21 +338,45 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
         servico: servico,
         barbeiro: barbeiro
       })
-    }).then(() => {
+    })
+    .then(response => response.json())
+    .then(result => {
+      // 2. UNA VEZ CONFIRMADO EL GUARDADO, ENVIAMOS A WHATSAPP
+      var textoWhatsApp = "Olá " + barbeiro + "!%0A%0A" +
+                          "Gostaria de confirmar meu agendamento no David Barber Studio:%0A" +
+                          "✂️ Serviço: " + servico + "%0A" +
+                          "📅 Data: " + data + "%0A" +
+                          "⏰ Hora: " + hora + "%0A" +
+                          "👤 Nome: " + nome;
+      
+      window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
+
+      // 3. LIMPIAMOS EL FORMULARIO Y RECARGAMOS LOS HORARIOS PARA BLOQUEAR EL QUE SE ACABA DE USAR
       document.getElementById("nome").value = "";
       document.getElementById("telefone").value = "";
-      triggerCargaHoras();
+      
+      if (typeof triggerCargaHoras === "function") {
+        triggerCargaHoras(); // Fuerza a la página a leer las citas y bloquearlas
+      }
+      
       document.getElementById("confirmacao").style.display = "none";
       btn.disabled = false;
       btn.innerText = "Agendar Horário ✅";
-    }).catch(err => {
-      console.log("Error al guardar.");
+    })
+    .catch(err => {
+      console.error("Error al guardar:", err);
+      alert("Erro ao salvar o agendamento. Tente novamente.");
       btn.disabled = false;
       btn.innerText = "Agendar Horário ✅";
+      document.getElementById("confirmacao").style.display = "none";
     });
-  };
+      }; // Cierre de la función window.solicitarAgendamento
 
-})();
+})(); // Cierre del contenedor principal del script
 </script>
+
 </body>
 </html>
+
+};
+  
