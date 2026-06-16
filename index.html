@@ -47,7 +47,6 @@ html, body {
 .card-barbeiro span { display: block; margin-top: 6px; font-size: 13px; font-weight: bold; letter-spacing: 1px; color: #ddd; }
 .card-barbeiro.active { border-color: #fdf0cd; background: #0f0e0b; box-shadow: 0 0 10px rgba(197, 160, 89, 0.15); }
 
-/* Escondido en la interfaz visual pero listo en código para tus 2 barberos futuros */
 .hidden-barber { display: none; }
 
 label { display: block; text-align: left; margin: 10px 0 5px 2px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; font-weight: 600; color: #8a8a8a; text-transform: uppercase; letter-spacing: 1.5px; }
@@ -176,7 +175,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     return ["08:30","09:00","09:30","10:00","10:30","11:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
   }
 
-    async function carregarHorariosDisponiveis(dataSeleccionada) {
+  async function carregarHorariosDisponiveis(dataSeleccionada) {
     var selectHora = document.getElementById("hora");
     var barbeiro = document.getElementById("barbeiro").value;
     var servico = document.getElementById("servico").value;
@@ -184,7 +183,8 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     selectHora.innerHTML = "<option value=''>Carregando horários...</option>";
 
     var partes = dataSeleccionada.split("-");
-    var diaSemana = new Date(partes[0], partes[1] - 1, partes[2]).getDay();
+    var dateObj = new Date(partes[0], partes[1] - 1, partes[2]);
+    var diaSemana = dateObj.getDay();
 
     if (diaSemana === 0) {
       selectHora.innerHTML = "<option value=''>Fechado aos Domingos</option>";
@@ -196,14 +196,16 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
 
     try {
       var respuesta = await fetch(API_URL + "?reservas=1&data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
-      ocupados = await respuesta.json();
+      ocupados = await respuesta.json(); // Lee las horas guardadas (Formato simple de siempre: ["09:00", "11:30"])
     } catch (e) {
       console.log("Error cargando horas.", e);
     }
 
-    // Normalizamos las horas ocupadas que vienen del Sheets
+    // Normalizamos la lista de horas ocupadas directo del Sheets
     var ocupadosNormalizados = ocupados.map(function(h) {
-      var t = h.trim().substring(0, 5);
+      // Si la respuesta viene como objeto por error, extraemos el string
+      var item = (typeof h === 'object' && h !== null) ? (h.hora || "") : h;
+      var t = item.toString().trim().substring(0, 5);
       return (t.length === 4) ? "0" + t : t;
     });
 
@@ -213,28 +215,38 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
 
     selectHora.innerHTML = "";
 
+    // Definimos cuántos bloques necesita el servicio ACTUAL elegido por el cliente
+    var bloquesNecesarios = (servico === "Corte e Barba") ? 2 : 1;
+
     for (var i = 0; i < horariosBase.length; i++) {
       var h = horariosBase[i];
       var hNormalizada = (h.length === 4) ? "0" + h : h;
       
-      // 1. ¿Está la hora ocupada directamente en el Sheets?
-      var estaOcupado = ocupadosNormalizados.includes(hNormalizada);
-      
-      // 2. ¿Es una hora pasada?
       var pasoHora = (dataSeleccionada === hoyStr && hNormalizada <= horaActualStr);
+      var estaOcupado = false;
+      var esIndisponivel = false;
 
-      // 3. Lógica para bloquear bloques de "Corte e Barba"
-      // Si el usuario elige "Corte e Barba", bloqueamos esta hora si:
-      // - Esta hora ya está ocupada.
-      // - La hora siguiente ya está ocupada por otra cita.
-      // - No hay hora siguiente (es el último turno).
-      var esBloqueOcupado = false;
-      if (servico === "Corte e Barba") {
-        var proximaHora = (i + 1 < horariosBase.length) ? horariosBase[i + 1] : null;
-        var proximaNormalizada = proximaHora ? ((proximaHora.length === 4) ? "0" + proximaHora : proximaHora) : null;
+      // LÓGICA DE BLOQUES HACIA ADELANTE
+      // Revisamos consecutivamente la cantidad de bloques que este servicio requiere
+      for (var b = 0; b < bloquesNecesarios; b++) {
+        var indexFila = i + b;
         
-        if (estaOcupado || (proximaNormalizada && ocupadosNormalizados.includes(proximaNormalizada)) || !proximaHora) {
-          esBloqueOcupado = true;
+        if (indexFila >= horariosBase.length) {
+          // Si el servicio requiere más bloques de los que quedan en el día, no cabe
+          esIndisponivel = true;
+          break;
+        }
+        
+        var horaEvaluar = horariosBase[indexFila];
+        var horaEvaluarNorm = (horaEvaluar.length === 4) ? "0" + horaEvaluar : horaEvaluar;
+        
+        if (ocupadosNormalizados.includes(horaEvaluarNorm)) {
+          if (b === 0) {
+            estaOcupado = true; // El bloque de inicio exacto está tomado
+          } else {
+            esIndisponivel = true; // El bloque de adelante está tomado, rompiendo el espacio doble
+          }
+          break;
         }
       }
 
@@ -242,45 +254,47 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       opt.value = hNormalizada;
       opt.text = hNormalizada;
 
-      // Aplicar el estado a la opción
+      // Aplicar estados visuales limpios en portugués de Brasil
       if (pasoHora) {
         opt.disabled = true;
         opt.text = hNormalizada + " (Já passou)";
-      } else if (servico === "Corte e Barba" && esBloqueOcupado) {
-        opt.disabled = true;
-        opt.text = hNormalizada + " (Indisponível p/ este serviço)";
       } else if (estaOcupado) {
         opt.disabled = true;
         opt.text = hNormalizada + " (Ocupado)";
+      } else if (esIndisponivel) {
+        opt.disabled = true;
+        opt.text = hNormalizada + " (Indisponível p/ este serviço)";
       }
 
       selectHora.add(opt);
     }
 
-    // Lógica final de mensajes
+    // Conteo y verificación final de los estados de la lista
     var libresReales = 0;
     var tieneBloqueos = false;
     for (var j = 0; j < selectHora.options.length; j++) {
-      if (!selectHora.options[j].disabled) libresReales++;
-      else tieneBloqueos = true;
+      if (!selectHora.options[j].disabled) {
+        libresReales++;
+      } else {
+        tieneBloqueos = true;
+      }
     }
 
     if (libresReales === 0 && tieneBloqueos) {
-        // Mensaje de que no hay disponibilidad para el servicio doble
-        var optAviso = document.createElement("option");
-        optAviso.text = (servico === "Corte e Barba") ? "⚠️ Sem blocos para este serviço" : "⚠️ Agenda cheia";
-        optAviso.disabled = true;
-        optAviso.selected = true;
-        selectHora.insertBefore(optAviso, selectHora.firstChild);
+      var optAviso = document.createElement("option");
+      optAviso.text = (servico === "Corte e Barba") ? "⚠️ Sem blocos para este serviço" : "⚠️ Agenda cheia, escolha outra data";
+      optAviso.disabled = true;
+      optAviso.selected = true;
+      selectHora.insertBefore(optAviso, selectHora.firstChild);
     } else {
-        var optSeleccione = document.createElement("option");
-        optSeleccione.text = "Selecione o seu horário...";
-        optSeleccione.disabled = true;
-        optSeleccione.selected = true;
-        selectHora.insertBefore(optSeleccione, selectHora.firstChild);
+      var optSeleccione = document.createElement("option");
+      optSeleccione.text = "Selecione o seu horário...";
+      optSeleccione.disabled = true;
+      optSeleccione.selected = true;
+      selectHora.insertBefore(optSeleccione, selectHora.firstChild);
     }
-    }
-  
+  }
+
   window.solicitarAgendamento = function() {
     var btn = document.getElementById("btnAgendar");
     var data = document.getElementById("data").value;
@@ -308,6 +322,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     btn.innerText = "Enviando para o Sheets... ⌛";
     document.getElementById("confirmacao").style.display = "block";
 
+    // Mantenemos una sola línea en el sheets impecable
     fetch(API_URL, {
       method: "POST",
       body: new URLSearchParams({
