@@ -12,7 +12,6 @@ html, body {
   overflow-x: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box;
 }
 
-/* Loader elegante de bienvenida */
 #loader {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000;
   display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999;
@@ -196,17 +195,39 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
 
     try {
       var respuesta = await fetch(API_URL + "?reservas=1&data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
-      ocupados = await respuesta.json(); // Lee las horas guardadas (Formato simple de siempre: ["09:00", "11:30"])
+      ocupados = await respuesta.json(); // Ahora llega: [{hora: "09:00", servico: "Corte e Barba"}]
     } catch (e) {
       console.log("Error cargando horas.", e);
     }
 
-    // Normalizamos la lista de horas ocupadas directo del Sheets
-    var ocupadosNormalizados = ocupados.map(function(h) {
-      // Si la respuesta viene como objeto por error, extraemos el string
-      var item = (typeof h === 'object' && h !== null) ? (h.hora || "") : h;
-      var t = item.toString().trim().substring(0, 5);
-      return (t.length === 4) ? "0" + t : t;
+    // Mapeamos y expandimos los bloques ocupados en la base de datos según el servicio guardado
+    var bloquesOcupadosEnBase = [];
+    
+    ocupados.forEach(function(item) {
+      var hItem = (typeof item === 'object' && item !== null) ? (item.hora || "") : item;
+      var sItem = (typeof item === 'object' && item !== null) ? (item.servico || "") : "";
+      
+      var t = hItem.toString().trim().substring(0, 5);
+      var horaNorm = (t.length === 4) ? "0" + t : t;
+      
+      // Bloqueamos la hora de inicio de la cita
+      if (!bloquesOcupadosEnBase.includes(horaNorm)) {
+        bloquesOcupadosEnBase.push(horaNorm);
+      }
+      
+      // Si la cita que ya está en el Sheets fue de "Corte e Barba", bloqueamos automáticamente la hora siguiente hacia adelante
+      if (sItem === "Corte e Barba") {
+        var idxOriginal = horariosBase.indexOf(t);
+        if (idxOriginal === -1) idxOriginal = horariosBase.indexOf(horaNorm);
+        
+        if (idxOriginal !== -1 && (idxOriginal + 1) < horariosBase.length) {
+          var proxOriginal = horariosBase[idxOriginal + 1];
+          var proxOriginalNorm = (proxOriginal.length === 4) ? "0" + proxOriginal : proxOriginal;
+          if (!bloquesOcupadosEnBase.includes(proxOriginalNorm)) {
+            bloquesOcupadosEnBase.push(proxOriginalNorm);
+          }
+        }
+      }
     });
 
     var agora = new Date();
@@ -215,8 +236,8 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
 
     selectHora.innerHTML = "";
 
-    // Definimos cuántos bloques necesita el servicio ACTUAL elegido por el cliente
-    var bloquesNecesarios = (servico === "Corte e Barba") ? 2 : 1;
+    // Verificamos cuántos bloques necesita el cliente ACTUAL que está navegando la web
+    var bloquesNecesariosCliente = (servico === "Corte e Barba") ? 2 : 1;
 
     for (var i = 0; i < horariosBase.length; i++) {
       var h = horariosBase[i];
@@ -226,25 +247,23 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       var estaOcupado = false;
       var esIndisponivel = false;
 
-      // LÓGICA DE BLOQUES HACIA ADELANTE
-      // Revisamos consecutivamente la cantidad de bloques que este servicio requiere
-      for (var b = 0; b < bloquesNecesarios; b++) {
-        var indexFila = i + b;
+      // Evaluamos consecutivamente si hay espacio libre para los bloques del cliente actual
+      for (var b = 0; b < bloquesNecesariosCliente; b++) {
+        var indexEval = i + b;
         
-        if (indexFila >= horariosBase.length) {
-          // Si el servicio requiere más bloques de los que quedan en el día, no cabe
-          esIndisponivel = true;
+        if (indexEval >= horariosBase.length) {
+          esIndisponivel = true; // No da el tiempo para terminar el servicio doble al final del día
           break;
         }
         
-        var horaEvaluar = horariosBase[indexFila];
-        var horaEvaluarNorm = (horaEvaluar.length === 4) ? "0" + horaEvaluar : horaEvaluar;
+        var horaValidar = horariosBase[indexEval];
+        var horaValidarNorm = (horaValidar.length === 4) ? "0" + horaValidar : horaValidar;
         
-        if (ocupadosNormalizados.includes(horaEvaluarNorm)) {
+        if (bloquesOcupadosEnBase.includes(horaValidarNorm)) {
           if (b === 0) {
-            estaOcupado = true; // El bloque de inicio exacto está tomado
+            estaOcupado = true; // Su hora de inicio elegida está pisada
           } else {
-            esIndisponivel = true; // El bloque de adelante está tomado, rompiendo el espacio doble
+            esIndisponivel = true; // El bloque de adelante está pisado, rompiendo el turno largo
           }
           break;
         }
@@ -254,7 +273,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       opt.value = hNormalizada;
       opt.text = hNormalizada;
 
-      // Aplicar estados visuales limpios en portugués de Brasil
       if (pasoHora) {
         opt.disabled = true;
         opt.text = hNormalizada + " (Já passou)";
@@ -269,15 +287,12 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       selectHora.add(opt);
     }
 
-    // Conteo y verificación final de los estados de la lista
+    // Validaciones finales de la lista de opciones
     var libresReales = 0;
     var tieneBloqueos = false;
     for (var j = 0; j < selectHora.options.length; j++) {
-      if (!selectHora.options[j].disabled) {
-        libresReales++;
-      } else {
-        tieneBloqueos = true;
-      }
+      if (!selectHora.options[j].disabled) libresReales++;
+      else tieneBloqueos = true;
     }
 
     if (libresReales === 0 && tieneBloqueos) {
@@ -322,7 +337,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     btn.innerText = "Enviando para o Sheets... ⌛";
     document.getElementById("confirmacao").style.display = "block";
 
-    // Mantenemos una sola línea en el sheets impecable
     fetch(API_URL, {
       method: "POST",
       body: new URLSearchParams({
