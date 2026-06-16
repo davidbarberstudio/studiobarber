@@ -251,9 +251,23 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       return;
     }
 
-    btn.disabled = true;
-    btn.innerText = "Processando... ⌛";
+    // 1. DISPARAR WHATSAPP DE INMEDIATO EN EL MILISEGUNDO 1
+    var textoWhatsApp = "Olá David Barbero Studio!%0A%0A" +
+                        "Gostaria de confirmar meu agendamento:%0A" +
+                        "💈 Barbeiro: " + barbeiro + "%0A" +
+                        "✂️ Serviço: " + servico + "%0A" +
+                        "📅 Data: " + data + "%0A" +
+                        "⏰ Hora: " + hora + "%0A" +
+                        "👤 Nome: " + nome;
+    
+    window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
 
+    // 2. CAMBIAR BOTÓN MIENTRAS SE GUARDA EN SEGUNDO PLANO
+    btn.disabled = true;
+    btn.innerText = "Enviando para o Sheets... ⌛";
+    document.getElementById("confirmacao").style.display = "block";
+
+    // 3. ENVIAR A GOOGLE SHEETS EN SEGUNDO PLANO
     fetch(API_URL, {
       method: "POST",
       body: new URLSearchParams({
@@ -265,27 +279,17 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
         barbeiro: barbeiro
       })
     }).then(() => {
-      // REDIRECCIONAMIENTO INMEDIATO AQUÍ
-      var textoWhatsApp = "Olá David Barbero Studio!%0A%0A" +
-                          "Gostaria de confirmar meu agendamento:%0A" +
-                          "💈 Barbeiro: " + barbeiro + "%0A" +
-                          "✂️ Serviço: " + servico + "%0A" +
-                          "📅 Data: " + data + "%0A" +
-                          "⏰ Hora: " + hora + "%0A" +
-                          "👤 Nome: " + nome;
-      
-      window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
-      
-      // Limpieza de campos en segundo plano
+      // Limpieza silenciosa de los campos
       document.getElementById("nome").value = "";
       document.getElementById("telefone").value = "";
       document.getElementById("hora").selectedIndex = 0;
       
       triggerCargaHoras();
+      document.getElementById("confirmacao").style.display = "none";
       btn.disabled = false;
       btn.innerText = "Agendar Horário ✅";
     }).catch(err => {
-      alert("Erro ao agendar. Tente novamente.");
+      console.log("Error al guardar de fondo, pero el cliente ya fue enviado a WhatsApp.");
       btn.disabled = false;
       btn.innerText = "Agendar Horário ✅";
     });
