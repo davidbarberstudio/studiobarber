@@ -176,7 +176,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     return ["08:30","09:00","09:30","10:00","10:30","11:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
   }
 
-  async function carregarHorariosDisponiveis(dataSeleccionada) {
+    async function carregarHorariosDisponiveis(dataSeleccionada) {
     var selectHora = document.getElementById("hora");
     var barbeiro = document.getElementById("barbeiro").value;
     var servico = document.getElementById("servico").value;
@@ -184,8 +184,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     selectHora.innerHTML = "<option value=''>Carregando horários...</option>";
 
     var partes = dataSeleccionada.split("-");
-    var dateObj = new Date(partes[0], partes[1] - 1, partes[2]);
-    var diaSemana = dateObj.getDay();
+    var diaSemana = new Date(partes[0], partes[1] - 1, partes[2]).getDay();
 
     if (diaSemana === 0) {
       selectHora.innerHTML = "<option value=''>Fechado aos Domingos</option>";
@@ -202,6 +201,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       console.log("Error cargando horas.", e);
     }
 
+    // Normalizamos las horas ocupadas que vienen del Sheets
     var ocupadosNormalizados = ocupados.map(function(h) {
       var t = h.trim().substring(0, 5);
       return (t.length === 4) ? "0" + t : t;
@@ -217,9 +217,17 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       var h = horariosBase[i];
       var hNormalizada = (h.length === 4) ? "0" + h : h;
       
+      // 1. ¿Está la hora ocupada directamente en el Sheets?
       var estaOcupado = ocupadosNormalizados.includes(hNormalizada);
+      
+      // 2. ¿Es una hora pasada?
       var pasoHora = (dataSeleccionada === hoyStr && hNormalizada <= horaActualStr);
 
+      // 3. Lógica para bloquear bloques de "Corte e Barba"
+      // Si el usuario elige "Corte e Barba", bloqueamos esta hora si:
+      // - Esta hora ya está ocupada.
+      // - La hora siguiente ya está ocupada por otra cita.
+      // - No hay hora siguiente (es el último turno).
       var esBloqueOcupado = false;
       if (servico === "Corte e Barba") {
         var proximaHora = (i + 1 < horariosBase.length) ? horariosBase[i + 1] : null;
@@ -234,6 +242,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       opt.value = hNormalizada;
       opt.text = hNormalizada;
 
+      // Aplicar el estado a la opción
       if (pasoHora) {
         opt.disabled = true;
         opt.text = hNormalizada + " (Já passou)";
@@ -248,44 +257,30 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       selectHora.add(opt);
     }
 
+    // Lógica final de mensajes
     var libresReales = 0;
-    var tieneOcupadosOIndisponibles = false;
-
+    var tieneBloqueos = false;
     for (var j = 0; j < selectHora.options.length; j++) {
-      if (!selectHora.options[j].disabled) {
-        libresReales++;
-      } else {
-        tieneOcupadosOIndisponibles = true;
-      }
+      if (!selectHora.options[j].disabled) libresReales++;
+      else tieneBloqueos = true;
     }
 
-    if (selectHora.options.length === 0 || (libresReales === 0 && servico !== "Corte e Barba")) {
-      selectHora.innerHTML = "";
-      var optVacio = document.createElement("option");
-      optVacio.value = "";
-      optVacio.text = "⚠️ Agenda cheia, escolha outra data";
-      optVacio.disabled = true;
-      optVacio.selected = true;
-      selectHora.add(optVacio);
-    } 
-    else if (servico === "Corte e Barba" && libresReales === 0 && tieneOcupadosOIndisponibles) {
-      var optAvisoDobles = document.createElement("option");
-      optAvisoDobles.value = "";
-      optAvisoDobles.text = "⚠️ Sem blocos para este serviço";
-      optAvisoDobles.disabled = true;
-      optAvisoDobles.selected = true;
-      selectHora.insertBefore(optAvisoDobles, selectHora.firstChild);
+    if (libresReales === 0 && tieneBloqueos) {
+        // Mensaje de que no hay disponibilidad para el servicio doble
+        var optAviso = document.createElement("option");
+        optAviso.text = (servico === "Corte e Barba") ? "⚠️ Sem blocos para este serviço" : "⚠️ Agenda cheia";
+        optAviso.disabled = true;
+        optAviso.selected = true;
+        selectHora.insertBefore(optAviso, selectHora.firstChild);
+    } else {
+        var optSeleccione = document.createElement("option");
+        optSeleccione.text = "Selecione o seu horário...";
+        optSeleccione.disabled = true;
+        optSeleccione.selected = true;
+        selectHora.insertBefore(optSeleccione, selectHora.firstChild);
     }
-    else {
-      var optSeleccione = document.createElement("option");
-      optSeleccione.value = "";
-      optSeleccione.text = "Selecione o seu horário...";
-      optSeleccione.disabled = true;
-      optSeleccione.selected = true;
-      selectHora.insertBefore(optSeleccione, selectHora.firstChild);
     }
-  }
-
+  
   window.solicitarAgendamento = function() {
     var btn = document.getElementById("btnAgendar");
     var data = document.getElementById("data").value;
