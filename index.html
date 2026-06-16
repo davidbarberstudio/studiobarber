@@ -6,18 +6,20 @@
 <title>David Barber Studio</title>
 
 <style>
+/* Estilo Base - Modern Classic de Lujo */
 html, body {
   margin: 0; padding: 0; width: 100%; height: 100%;
-  background-color: #000000; font-family: 'Times New Roman', Georgia, serif; color: #f5f5f5;
-  overflow-x: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box;
+  background-color: #000000; font-family: 'Segoe UI', Arial, sans-serif; color: #f5f5f5;
+  overflow-x: hidden; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; box-sizing: border-box;
 }
 
+/* Loader Premium */
 #loader {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000;
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000000;
   display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999;
 }
 .loader-title {
-  font-size: 24px; font-weight: bold; letter-spacing: 4px;
+  font-family: 'Times New Roman', Georgia, serif; font-size: 24px; font-weight: bold; letter-spacing: 4px;
   background: linear-gradient(90deg, #b39210, #f8e48d, #b39210); background-size: 200%;
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
@@ -25,44 +27,55 @@ html, body {
 .loader-bar span { display: block; height: 100%; width: 0%; background: #D4AF37; animation: loading 1s forwards; }
 @keyframes loading { 100% { width: 100%; } }
 
-.header-container { margin-bottom: 15px; text-align: center; padding: 0 10px; }
+/* Contenedor Principal con Efecto Neón Dorado Suave */
+#form-container {
+  width: 92%; max-width: 400px; padding: 25px 20px; border-radius: 12px; margin: 20px 0;
+  background: #070707; border: 1px solid #c5a059; 
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 15px rgba(197, 160, 89, 0.15); box-sizing: border-box;
+  text-align: center;
+}
+
+/* Diseño del Encabezado con Iniciales de tu Logo */
+.logo-placeholder {
+  font-family: 'Times New Roman', Georgia, serif; font-size: 55px; font-weight: bold; line-height: 1; margin-bottom: 5px;
+  background: linear-gradient(135deg, #c5a059 0%, #fdf0cd 50%, #c5a059 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 4px rgba(197,160,89,0.3));
+}
 .titulo {
-  font-size: 28px; font-weight: bold; letter-spacing: 2px; margin: 0 0 4px 0;
+  font-family: 'Times New Roman', Georgia, serif; font-size: 22px; font-weight: bold; letter-spacing: 3px; margin: 0 0 6px 0;
   background: linear-gradient(135deg, #c5a059 0%, #fdf0cd 50%, #c5a059 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.slogan { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; color: #ffffff; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; opacity: 0.9; }
-.horarios-info { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; color: #c5a059; line-height: 1.4; opacity: 0.8; }
+.slogan { font-size: 10px; color: #ffffff; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 12px; opacity: 0.9; font-weight: 500; }
+.horarios-info { font-size: 10px; color: #c5a059; line-height: 1.5; opacity: 0.85; margin-bottom: 15px; border-bottom: 1px dashed #2c2514; padding-bottom: 15px; }
 
-#form-container {
-  width: 92%; max-width: 390px; padding: 20px; border-radius: 8px;
-  background: #070707; border: 1px solid #2c2514; 
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(197, 160, 89, 0.05); box-sizing: border-box;
-}
-
-.barbeiros-container { display: flex; justify-content: center; gap: 10px; margin: 5px 0 15px 0; }
-.card-barbeiro { background: #000; border-radius: 4px; padding: 10px; width: 100px; cursor: pointer; transition: 0.3s; border: 1px solid #222; text-align: center; }
-.card-barbeiro img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid #c5a059; }
-.card-barbeiro span { display: block; margin-top: 6px; font-size: 13px; font-weight: bold; letter-spacing: 1px; color: #ddd; }
-.card-barbeiro.active { border-color: #fdf0cd; background: #0f0e0b; box-shadow: 0 0 10px rgba(197, 160, 89, 0.15); }
-
+/* Tarjetas de Barberos Premium */
+.barbeiros-container { display: flex; justify-content: center; gap: 12px; margin: 5px 0 15px 0; }
+.card-barbeiro { background: #000000; border-radius: 8px; padding: 12px; width: 110px; cursor: pointer; transition: 0.3s; border: 1px solid #222222; text-align: center; }
+.card-barbeiro img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #c5a059; transition: 0.3s; }
+.card-barbeiro span { display: block; margin-top: 8px; font-size: 13px; font-weight: bold; letter-spacing: 1px; color: #dddddd; }
+.card-barbeiro.active { border-color: #fdf0cd; background: #0f0e0b; box-shadow: 0 0 12px rgba(197, 160, 89, 0.3); }
+.card-barbeiro.active img { border-color: #fdf0cd; transform: scale(1.05); }
 .hidden-barber { display: none; }
 
-label { display: block; text-align: left; margin: 10px 0 5px 2px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; font-weight: 600; color: #8a8a8a; text-transform: uppercase; letter-spacing: 1.5px; }
-select, input { width: 100%; padding: 12px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #2a2a2a; background: #000000; color: #ffffff; font-size: 14px; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; transition: 0.2s; }
-select:focus, input:focus { outline: none; border-color: #c5a059; box-shadow: 0 0 5px rgba(197, 160, 89, 0.2); }
+/* Formulario - Inputs y Selects */
+label { display: block; text-align: left; margin: 14px 0 6px 2px; font-size: 10px; font-weight: 700; color: #8a8a8a; text-transform: uppercase; letter-spacing: 1.5px; }
+select, input { width: 100%; padding: 14px; margin-bottom: 5px; border-radius: 6px; border: 1px solid #2a2a2a; background: #000000; color: #ffffff; font-size: 14px; box-sizing: border-box; transition: 0.3s; }
+select:focus, input:focus { outline: none; border-color: #c5a059; box-shadow: 0 0 8px rgba(197, 160, 89, 0.25); }
 
+/* Botón de Agendamiento Oro de Lujo */
 button { 
   background: linear-gradient(135deg, #967433 0%, #c5a059 50%, #fdf0cd 100%); 
-  color: #000000; border: none; padding: 14px; font-size: 13px; font-weight: bold; 
-  border-radius: 4px; cursor: pointer; margin-top: 20px; width: 100%; 
+  color: #000000; border: none; padding: 16px; font-size: 13px; font-weight: bold; 
+  border-radius: 6px; cursor: pointer; margin-top: 25px; width: 100%; 
   transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  box-shadow: 0 5px 20px rgba(197, 160, 89, 0.2);
 }
-button:active { transform: scale(0.98); }
-button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow: none; }
+button:active { transform: scale(0.97); }
+button:disabled { background: #222222; color: #555555; cursor: not-allowed; box-shadow: none; border: 1px solid #333333; }
 
-#confirmacao { display: none; margin-top: 15px; color: #fdf0cd; font-size: 13px; font-family: 'Segoe UI', Arial, sans-serif; background: #110f0a; padding: 12px; border-radius: 4px; border: 1px solid #c5a059; text-align: center; }
+/* Cuadro de Confirmación */
+#confirmacao { display: none; margin-top: 15px; color: #fdf0cd; font-size: 13px; background: #110f0a; padding: 14px; border-radius: 6px; border: 1px solid #c5a059; text-align: center; font-weight: 500; box-shadow: 0 0 10px rgba(197,160,89,0.1); }
 </style>
 </head>
 <body>
@@ -72,22 +85,22 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
   <div class="loader-bar"><span></span></div>
 </div>
 
-<div class="header-container">
+<div id="form-container">
+  <div class="logo-placeholder">DB</div>
   <div class="titulo">DAVID BARBER STUDIO</div>
   <div class="slogan">Estilo, Precisão e Confiança</div>
   <div class="horarios-info">
-    🕒 Seg: 08:30–11:00, 13:00–17:30 | Ter a Sex: 08:30–11:00, 13:00–18:00<br>
+    🕒 Seg: 08:30–11:00, 13:00–17:30<br>
+    🕒 Ter a Sex: 08:30–11:00, 13:00–18:00<br>
     🕒 Sáb: 08:00–11:30, 13:00–17:30
   </div>
-</div>
 
-<div id="form-container">
   <form id="agendaForm">
     
     <label>💈 Profissional</label>
     <div class="barbeiros-container">
       <div class="card-barbeiro active" onclick="seleccionarBarber('David', this)">
-        <img src="https://images.unsplash.com/photo-1517832606589-7a598b647192?w=150&auto=format&fit=crop&q=60">
+        <img id="foto-david" src="https://images.unsplash.com/photo-1517832606589-7a598b647192?w=150&auto=format&fit=crop&q=60">
         <span>David</span>
       </div>
       <div class="card-barbeiro hidden-barber" onclick="seleccionarBarber('Barbeiro 2', this)">
@@ -97,7 +110,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     </div>
     <input type="hidden" id="barbeiro" value="David">
 
-    <label>✂️ Serviço</label>
+    <label>✂️ Serviço Ofertado</label>
     <select id="servico" onchange="triggerCargaHoras()">
       <option value="Corte">Corte Masculino — R$40</option>
       <option value="Barba">Barba — R$30</option>
@@ -109,7 +122,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     <input type="date" id="data" required onchange="triggerCargaHoras()">
 
     <label>👤 Seu Nome</label>
-    <input type="text" id="nome" placeholder="Digite seu nome" required>
+    <input type="text" id="nome" placeholder="Digite seu nome completo" required>
 
     <label>📱 Seu WhatsApp</label>
     <input type="tel" inputmode="numeric" id="telefone" placeholder="Ex: 47999999999" required>
@@ -123,7 +136,7 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
   </form>
 
   <div id="confirmacao">
-    Agendamento enviado! Redirecionando...
+    Agendamento enviado! Abrindo WhatsApp e salvando... ⌛
   </div>
 </div>
 
@@ -165,12 +178,13 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
 
   function obtenerMatrizHorarios(diaSemana) {
     if (diaSemana === 0) return [];
-    if (diaSemana === 1) {
+    if (diaSemana === 1) { // Lunes
       return ["08:30","09:00","09:30","10:00","10:30","11:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30"];
     }
-    if (diaSemana === 6) {
+    if (diaSemana === 6) { // Sábado
       return ["08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30"];
     }
+    // Martes a Viernes
     return ["08:30","09:00","09:30","10:00","10:30","11:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
   }
 
@@ -207,10 +221,9 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       var bloquesAnteriores = (typeof item === 'object' && item !== null) ? (parseInt(item.bloques) || 1) : 1;
       
       var t = hItem.toString().trim().substring(0, 5);
-      if(t.includes("Selec")) return; // Protege el sistema si hay basura en el Sheets
+      if(t.includes("Selec")) return; 
       
       var horaNorm = (t.length === 4) ? "0" + t : t;
-      
       var idxOriginal = horariosBase.indexOf(t);
       if (idxOriginal === -1) idxOriginal = horariosBase.indexOf(horaNorm);
       
@@ -234,9 +247,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
 
     selectHora.innerHTML = "";
 
-    // Lógica limpia: El combo "Corte e Barba" consume 2 bloques, los demás consumen 1 bloque
-    var bloquesNecesariosCliente = (servico === "Corte e Barba") ? 2 : 1;
-
     for (var i = 0; i < horariosBase.length; i++) {
       var h = horariosBase[i];
       var hNormalizada = (h.length === 4) ? "0" + h : h;
@@ -244,6 +254,19 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
       var pasoHora = (dataSeleccionada === hoyStr && hNormalizada <= horaActualStr);
       var estaOcupado = false;
       var esIndisponivel = false;
+
+      // REGLA DE EXCEPCIÓN: Verificar si es la última hora de la mañana o tarde para liberar el combo doble
+      var esUltimaHoraManana = false;
+      if (diaSemana === 6 && hNormalizada === "11:30") esUltimaHoraManana = true;
+      if (diaSemana !== 6 && hNormalizada === "11:00") esUltimaHoraManana = true;
+
+      var esUltimaHoraTarde = false;
+      if (diaSemana === 1 && hNormalizada === "17:30") esUltimaHoraTarde = true;
+      if (diaSemana === 6 && hNormalizada === "17:30") esUltimaHoraTarde = true;
+      if (diaSemana > 1 && diaSemana < 6 && hNormalizada === "18:00") esUltimaHoraTarde = true;
+
+      // Si es combo "Corte e Barba" y NO es una de las últimas horas excepcionales, requiere validar 2 bloques
+      var bloquesNecesariosCliente = (servico === "Corte e Barba" && !esUltimaHoraManana && !esUltimaHoraTarde) ? 2 : 1;
 
       for (var b = 0; b < bloquesNecesariosCliente; b++) {
         var indexEval = i + b;
@@ -315,7 +338,6 @@ button:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow
     var barbeiro = document.getElementById("barbeiro").value;
     var servico = document.getElementById("servico").value;
 
-    // Validación estricta para evitar que se guarden textos informativos en el Sheets
     if (!data || !hora || hora === "" || hora.includes("Selecione") || hora.includes("Agenda") || hora.includes("Sem blocos") || !nome || !telefone) {
       alert("Por favor, selecione um horário válido antes de agendar.");
       return;
