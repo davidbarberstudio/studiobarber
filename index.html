@@ -25,11 +25,11 @@ body::before {
   max-width: 500px;
   height: 95vw;
   max-height: 500px;
-  background-image: url("https://i.ibb.co/6R6M6j9z/logo-david-transparent.png");
+  background-image: url("https://i.ibb.co/Y4RZcLW6/1781654675079.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.04; /* Ultra suave para efecto fantasma real, no estorba los campos */
+  opacity: 0.04; /* Ultra suave para efecto fantasma real, no estorba en los campos */
   filter: blur(0.5px);
   z-index: 0;
   pointer-events: none;
@@ -41,7 +41,7 @@ body::before {
   display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999;
 }
 .loader-logo {
-  width: 200px; /* Tamaño grande e imponente para la carga */
+  width: 200px; /* Tamaño grande e imponente para la pantalla de carga */
   height: auto; margin-bottom: 20px;
   filter: drop-shadow(0 0 10px rgba(197,160,89,0.6));
 }
@@ -65,7 +65,7 @@ body::before {
   text-align: center;
 }
 
-/* Logo Oficial en la Cabecera del Formulario (Sin fondo negro) */
+/* Logo Oficial en la Cabecera del Formulario */
 .brand-logo {
   width: 130px; height: auto; margin-bottom: 12px; 
   filter: drop-shadow(0 0 6px rgba(197,160,89,0.4));
@@ -105,13 +105,13 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 <body>
 
 <div id="loader">
-  <img src="https://i.ibb.co/6R6M6j9z/logo-david-transparent.png" alt="Logo David Barber Studio" class="loader-logo">
+  <img src="https://i.ibb.co/Y4RZcLW6/1781654675079.png" alt="Logo David Barber Studio" class="loader-logo">
   <div class="loader-title">DAVID BARBER STUDIO</div>
   <div class="loader-bar"><span></span></div>
 </div>
 
 <div id="form-container">
-  <img src="https://i.ibb.co/6R6M6j9z/logo-david-transparent.png" alt="Logo David Barber Studio" class="brand-logo">
+  <img src="https://i.ibb.co/Y4RZcLW6/1781654675079.png" alt="Logo David Barber Studio" class="brand-logo">
   
   <div class="titulo">DAVID BARBER STUDIO</div>
   <div class="slogan">Estilo, Precisão e Confiança</div>
@@ -168,7 +168,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
   window.addEventListener("load", function(){
     setTimeout(function(){
       document.getElementById("loader").style.display = "none";
-    }, 1200); // Tiempo óptimo para apreciar el logo premium al cargar
+    }, 1200); // Tiempo premium para lucir el logo en grande
     
     var hoje = new Date();
     var mes = String(hoje.getMonth() + 1).padStart(2, '0');
