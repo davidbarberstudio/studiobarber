@@ -14,35 +14,36 @@ html, body {
   position: relative;
 }
 
-/* LOGO NUEVO GIGANTE EN TODO EL FONDO (Efecto Fantasma Opaco) */
+/* LOGO GRANDE DETRÁS DE TODO TIPO FANTASMA */
 body::before {
   content: "";
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 100vw; /* Tamaño grande que abarca toda la pantalla */
+  width: 100vw; 
   height: 100vh;
   background-image: url("https://i.ibb.co/Mk0cWNvk/1781700650976.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.04; /* Muy opaco para que no interfiera cuando el cliente llena los campos */
+  opacity: 0.05; /* Un toque sutil para que se vea de fondo sin molestar los textos */
+  mix-blend-mode: screen; /* Quita el recuadro gris en el fondo */
   z-index: 0;
   pointer-events: none;
 }
 
-/* Pantalla de Carga (Loader) con Logo Gigante e Imponente */
+/* Pantalla de Carga (Loader) - LOGO FLOTANDO SIN RECUADRO */
 #loader {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000000;
   display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999;
 }
 .loader-logo {
-  width: 85vw; /* Logo grande que tapa casi toda la pantalla inicial */
+  width: 85vw; 
   max-width: 480px;
   height: auto;
   margin-bottom: 25px;
-  filter: drop-shadow(0 0 15px rgba(197,160,89,0.5));
+  mix-blend-mode: screen; /* Quita el borde cuadrado por completo, dejándolo flotando */
 }
 .loader-bar { width: 160px; height: 3px; background: #1a1a1a; border-radius: 10px; overflow: hidden; }
 .loader-bar span { display: block; height: 100%; width: 0%; background: #D4AF37; animation: loading 1.5s forwards; }
@@ -51,18 +52,18 @@ body::before {
 /* Contenedor Principal (Formulario) */
 #form-container {
   position: relative;
-  z-index: 1; /* Se mantiene por encima del fondo fantasma */
+  z-index: 1; 
   width: 92%; max-width: 400px; padding: 25px 20px; border-radius: 12px; margin: 20px 0;
-  background: rgba(7, 7, 7, 0.88); /* Fondo oscuro equilibrado para resaltar las letras */
+  background: rgba(0, 0, 0, 0.75); /* Fondo transparente para que el logo fantasma se vea por detrás */
   border: 1px solid #c5a059; 
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 15px rgba(197, 160, 89, 0.15); box-sizing: border-box;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9); box-sizing: border-box;
   text-align: center;
 }
 
-/* INICIALES DB EN FORMATO LLAMATIVO Y DE LUJO */
+/* Letras DB Llamativas */
 .db-header {
   font-family: 'Times New Roman', Georgia, serif;
-  font-size: 54px; /* Tamaño grande y de alto impacto */
+  font-size: 54px; 
   font-weight: bold;
   letter-spacing: 2px;
   line-height: 1;
@@ -82,7 +83,7 @@ body::before {
 .horarios-info { font-size: 10px; color: #c5a059; line-height: 1.5; opacity: 0.85; margin-bottom: 15px; border-bottom: 1px dashed #2c2514; padding-bottom: 15px; }
 
 /* Tarjetas de Barberos */
-.barbeiros-container { display: flex; justify(content): center; justify-content: center; gap: 12px; margin: 5px 0 15px 0; }
+.barbeiros-container { display: flex; justify-content: center; gap: 12px; margin: 5px 0 15px 0; }
 .card-barbeiro { background: #000000; border-radius: 8px; padding: 12px; width: 110px; cursor: pointer; transition: 0.3s; border: 1px solid #222222; text-align: center; }
 .card-barbeiro img { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2px solid #c5a059; transition: 0.3s; }
 .card-barbeiro span { display: block; margin-top: 8px; font-size: 13px; font-weight: bold; letter-spacing: 1px; color: #dddddd; }
@@ -94,7 +95,7 @@ label { display: block; text-align: left; margin: 14px 0 6px 2px; font-size: 10p
 select, input { width: 100%; padding: 14px; margin-bottom: 5px; border-radius: 6px; border: 1px solid #2a2a2a; background: #000000; color: #ffffff; font-size: 14px; box-sizing: border-box; }
 select:focus, input:focus { outline: none; border-color: #c5a059; box-shadow: 0 0 8px rgba(197, 160, 89, 0.25); }
 
-/* Botón Oro de Lujo */
+/* Botón Oro */
 button { 
   background: linear-gradient(135deg, #967433 0%, #c5a059 50%, #fdf0cd 100%); 
   color: #000000; border: none; padding: 16px; font-size: 13px; font-weight: bold; 
@@ -107,13 +108,12 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 <body>
 
 <div id="loader">
-  <img src="https://i.ibb.co/Mk0cWNvk/1781700650976.png" alt="Logo David Barber Studio" class="loader-logo">
+  <img src="https://i.ibb.co/Mk0cWNvk/1781700650976.png" alt="Logo" class="loader-logo">
   <div class="loader-bar"><span></span></div>
 </div>
 
 <div id="form-container">
   <div class="db-header">DB</div>
-  
   <div class="titulo">DAVID BARBER STUDIO</div>
   <div class="slogan">Estilo, Precisão e Confiança</div>
   <div class="horarios-info">
@@ -169,7 +169,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
   window.addEventListener("load", function(){
     setTimeout(function(){
       document.getElementById("loader").style.display = "none";
-    }, 1500); // Tiempo idóneo para lucir el logo gigante
+    }, 1500);
     
     var hoje = new Date();
     var mes = String(hoje.getMonth() + 1).padStart(2, '0');
