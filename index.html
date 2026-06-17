@@ -14,24 +14,6 @@ html, body {
   position: relative;
 }
 
-/* CORRECCIÓN ABSOLUTA: MARCA DE AGUA VISIBLE SIN FILTROS QUE LA INVISIBILICEN */
-body::before {
-  content: "";
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 85vw; /* Tamaño ideal en móviles */
-  height: 85vh;
-  background-image: url("https://i.ibb.co/mV1f818y/1781696958845.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.25; /* Subido para garantizar que lo veas con total claridad en tu pantalla */
-  z-index: 0;
-  pointer-events: none;
-}
-
 /* Pantalla de Carga (Loader) - Logo Grande y Limpio Flotando */
 #loader {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000000;
@@ -42,7 +24,7 @@ body::before {
   max-width: 480px;
   height: auto;
   margin-bottom: 25px;
-  mix-blend-mode: screen; /* Este solo se queda aquí para el inicio flotante */
+  mix-blend-mode: screen;
 }
 .loader-bar { width: 160px; height: 3px; background: #1a1a1a; border-radius: 10px; overflow: hidden; }
 .loader-bar span { display: block; height: 100%; width: 0%; background: #D4AF37; animation: loading 1.5s forwards; }
@@ -53,10 +35,38 @@ body::before {
   position: relative;
   z-index: 1; 
   width: 92%; max-width: 400px; padding: 25px 20px; border-radius: 12px; margin: 20px 0;
-  background: rgba(0, 0, 0, 0.75); /* Fondo equilibrado para resaltar las iniciales traseras */
+  background: #000000; /* Fondo negro sólido como el original */
   border: 1px solid #c5a059; 
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9); box-sizing: border-box;
   text-align: center;
+  overflow: hidden; /* Evita que el logo se salga de las esquinas redondeadas */
+}
+
+/* MARCA DE AGUA DEL LOGO NUEVO (Estilo Armando Barber Shop) */
+#form-container::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 120%;
+  background-image: url("https://i.ibb.co/mV1f818y/1781696958845.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.08; /* Sutil para que sea marca de agua real y no se vea blanco tapando textos */
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Asegura que los textos y campos queden por encima de la marca de agua */
+#form-container name,
+#form-container div,
+#form-container form,
+#confirmacao {
+  position: relative;
+  z-index: 1;
 }
 
 /* Iniciales DB Llamativas */
