@@ -6,7 +6,7 @@
 <title>David Barber Studio</title>
 
 <style>
-/* RESET EXACTO DE ARMANDO */
+/* RESET DE PÁGINA */
 body, html {
   margin: 0;
   padding: 0;
@@ -14,7 +14,7 @@ body, html {
   min-height: 100%;
 }
 
-/* PANTALLA DE CARGA (LOADER DAVID) */
+/* PANTALLA DE CARGA (LOADER) */
 #loader {
   position: fixed;
   top: 0;
@@ -29,9 +29,9 @@ body, html {
   z-index: 99999;
 }
 
-/* TAMAÑO DEL LOGO AGRANDADO A TU MEDIDA */
+/* TAMAÑO DEL LOGO EN LA PANTALLA DE CARGA */
 #loader img {
-  width: 360px; /* Se aumentó de 280px a 360px para que se vea más grande */
+  width: 360px; /* Tamaño grande ajustado */
 }
 
 .loader-bar {
@@ -48,7 +48,7 @@ body, html {
   height: 100%;
   width: 0%;
   background: #D4AF37;
-  /* TIEMPO AJUSTADO: Se cambió de 1.5s a 2.5s para que se quede un poquito más */
+  /* TIEMPO AJUSTADO: 2.5 segundos para que se quede un poco más */
   animation: loading 2.5s forwards;
 }
 
@@ -57,7 +57,7 @@ body, html {
   100% { width: 100%; }
 }
 
-/* BODY CON SCROLL NATURAL */
+/* ESTILOS DEL CUERPO PRINCIPAL */
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
   color: #ddd;
@@ -84,7 +84,7 @@ body {
   filter: drop-shadow(0 0 8px rgba(197,160,89,0.5));
 }
 
-/* TITULO DAVID */
+/* TÍTULO PRINCIPAL */
 .titulo {
   font-family: 'Times New Roman', Georgia, serif;
   font-size: 22px;
@@ -113,7 +113,7 @@ body {
   padding-bottom: 15px;
 }
 
-/* FORMULARIO ESTRUCTURA ARMANDO */
+/* CONTENEDOR DEL FORMULARIO */
 #form-container {
   position: relative;
   max-width: 420px;
@@ -126,20 +126,20 @@ body {
   overflow: hidden;
 }
 
-/* LOGO DE FONDO EN MOVIMIENTO (ESTILO ARMANDO) */
+/* NUEVO LOGO DE FONDO AJUSTADO */
 #form-container::before {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 130%;
-  height: 130%;
-  background-image: url("https://i.ibb.co/mV1f818y/1781696958845.png");
+  width: 100%;
+  height: 100%;
+  background-image: url("https://i.ibb.co/dsPsJhgy/1781700842770.png"); /* Tu nuevo logo */
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.08;
+  opacity: 0.06; /* Opacidad sutil para que no tape las letras */
   z-index: 0;
   pointer-events: none;
 }
@@ -150,7 +150,7 @@ body {
   z-index: 1;
 }
 
-/* BARBEROS */
+/* SECCIÓN BARBEROS */
 .barbeiros {
   display: flex;
   justify-content: center;
@@ -184,7 +184,7 @@ body {
   box-shadow: 0 0 12px rgba(197, 160, 89, 0.6);
 }
 
-/* CAMPOS DE TEXTO */
+/* ENTRADAS Y TEXTOS */
 label {
   display: block;
   margin: 14px 0 6px;
@@ -212,7 +212,7 @@ select:focus, input:focus {
   box-shadow: 0 0 8px rgba(197, 160, 89, 0.5);
 }
 
-/* BOTÓN ORO */
+/* BOTÓN AGENDAR */
 button {
   background: linear-gradient(90deg, #967433, #c5a059);
   color: #000;
@@ -233,7 +233,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* MENSAJE DE CONFIRMACIÓN */
+/* MENSAJE DE ESPERA */
 #confirmacao {
   display: none;
   margin-top: 15px;
@@ -310,11 +310,11 @@ button:disabled {
 (function(){
   "use strict";
 
-  // URL DE LA API DE DAVID BARBER STUDIO
+  // URL DE TU API GOOGLE APPS SCRIPT
   const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHur-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
   window.addEventListener("load", function(){
-    /* TIEMPO DEL SCRIPT: Ajustado a 2200ms para coordinar con la barra */
+    /* TIEMPO COORDINADO CON LA ANIMACIÓN (2.2 segundos) */
     setTimeout(function(){
       var loader = document.getElementById("loader");
       if(loader) loader.style.display = "none";
@@ -369,7 +369,7 @@ button:disabled {
     var ocupados = [];
 
     try {
-      /* CORRECCIÓN CRÍTICA DE BLOQUEO: Se cambió "barbeiro" por "barbero" para alinearse exactamente con tu Script.gs */
+      /* CONSULTA DE BLOQUEO CON EL PARÁMETRO "barbero" QUE TU SCRIPT ENTIENDE */
       var respuesta = await fetch(API_URL + "?data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
       ocupados = await respuesta.json(); 
     } catch (e) { console.log(e); }
@@ -446,34 +446,46 @@ button:disabled {
     var btn = document.getElementById("btnAgendar");
     if(btn.disabled) return;
 
-    var data = document.getElementById("data").value;
-    var hora = document.getElementById("hora").value;
-    var nome = document.getElementById("nome").value.trim();
-    var telefone = document.getElementById("telefone").value.trim();
-    var barbeiro = document.getElementById("barbeiro").value;
-    var servico = document.getElementById("servico").value;
+    var dataVal = document.getElementById("data").value;
+    var horaVal = document.getElementById("hora").value;
+    var nomeVal = document.getElementById("nome").value.trim();
+    var telefoneVal = document.getElementById("telefone").value.trim();
+    var barbeiroVal = document.getElementById("barbeiro").value;
+    var servicoVal = document.getElementById("servico").value;
 
-    if (!data || !hora || hora === "" || hora.includes("Selecione") || !nome || !telefone) {
+    if (!dataVal || !horaVal || horaVal === "" || horaVal.includes("Selecione") || !nomeVal || !telefoneVal) {
       alert("Por favor, preencha todos os campos."); return;
     }
 
     btn.disabled = true;
     btn.innerText = "Agendando...";
 
-    var textoWhatsApp = "Olá " + barbeiro + "!%0A%0A" + "Confirmar agendamento no David Barber Studio:%0A" + "✂️ Serviço: " + servico + "%0A" + "📅 Data: " + data + "%0A" + "⏰ Hora: " + hora + "%0A" + "👤 Nome: " + nome;
+    var textoWhatsApp = "Olá " + barbeiroVal + "!%0A%0A" + "Confirmar agendamento no David Barber Studio:%0A" + "✂️ Serviço: " + servicoVal + "%0A" + "📅 Data: " + dataVal + "%0A" + "⏰ Hora: " + horaVal + "%0A" + "👤 Nome: " + nomeVal;
     window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
 
     document.getElementById("confirmacao").style.display = "block";
 
+    /* PARCHE DE GUARDADO EXCEL: Enviando las variables en español exactas para tu doPost */
+    var datosEnvio = new URLSearchParams();
+    datosEnvio.append("data", dataVal);
+    datosEnvio.append("hora", horaVal);
+    datosEnvio.append("cliente", nomeVal);
+    datosEnvio.append("telefone", telefoneVal);
+    datosEnvio.append("servico", servicoVal);
+    datosEnvio.append("barbeiro", barbeiroVal);
+
     fetch(API_URL, {
       method: "POST",
-      body: new URLSearchParams({ data: data, hora: hora, cliente: nome, telefone: telefone, servico: servico, barbeiro: barbeiro })
-    }).then(() => {
-      document.getElementById("nome").value = ""; document.getElementById("telefone").value = "";
+      body: datosEnvio
+    }).then(function() {
+      document.getElementById("nome").value = ""; 
+      document.getElementById("telefone").value = "";
+      document.getElementById("confirmacao").style.display = "none";
       triggerCargaHoras();
       btn.disabled = false;
       btn.innerText = "Agendar Horário ✅";
-    }).catch(() => { 
+    }).catch(function() { 
+      document.getElementById("confirmacao").style.display = "none";
       btn.disabled = false; 
       btn.innerText = "Agendar Horário ✅";
     });
