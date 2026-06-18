@@ -124,7 +124,7 @@ body {
   overflow: hidden;
 }
 
-/* LOGO DE FONDO NUEVO COMPLETAMENTE ADAPTADO */
+/* LOGO DE FONDO METALIZADO */
 #form-container::before {
   content: "";
   position: absolute;
@@ -308,7 +308,7 @@ button:disabled {
 (function(){
   "use strict";
 
-  // URL DE CONEXIÓN DE STUDIO BARBER
+  // URL DE CONEXIÓN ÚNICA DE STUDIO BARBER
   const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHur-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
   window.addEventListener("load", function(){
@@ -366,7 +366,7 @@ button:disabled {
     var ocupados = [];
 
     try {
-      /* Línea 22 de tu script: acepta 'barbeiro' o 'barbero' */
+      /* Línea 22 de tu script: Envía '?data=' y '&barbeiro=' para procesar los bloqueos */
       var respuesta = await fetch(API_URL + "?data=" + dataSeleccionada + "&barbeiro=" + encodeURIComponent(barbeiro));
       ocupados = await respuesta.json(); 
     } catch (e) { console.log(e); }
@@ -462,8 +462,8 @@ button:disabled {
 
     document.getElementById("confirmacao").style.display = "block";
 
-    /* LA SOLUCIÓN FINAL: Empaquetado como FormData nativo para sincronizar con tu e.parameter */
-    var datosEnvio = new FormData();
+    /* PARCHE CORRECTO: Sincronización exacta con las líneas 76-81 y 100-109 de tu doPost de Studio Barber */
+    var datosEnvio = new URLSearchParams();
     datosEnvio.append("data", dataVal);
     datosEnvio.append("hora", horaVal);
     datosEnvio.append("cliente", nomeVal);
@@ -473,8 +473,10 @@ button:disabled {
 
     fetch(API_URL, {
       method: "POST",
-      body: datosEnvio,
-      mode: "no-cors" /* Evita bloqueos de seguridad de navegación cruzada */
+      body: datosEnvio.toString(),
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
     }).then(function() {
       document.getElementById("nome").value = ""; 
       document.getElementById("telefone").value = "";
