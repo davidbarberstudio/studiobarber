@@ -170,7 +170,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 (function(){
   "use strict";
 
-  // URL DE TU IMPLEMENTACIÓN DE WEB APP (TERMINA EN /exec)
+  // URL DE TU IMPLEMENTACIÓN DE WEB APP (Asegúrate de que sea tu URL real terminada en /exec)
   const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHur-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
   window.addEventListener("load", function(){
@@ -221,25 +221,36 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
     var horariosBase = obtenerMatrizHorarios(diaSemana);
     var ocupados = [];
 
+    // PARCHE DE SEGURIDAD INTERNA: Lectura robusta para evitar caídas silenciosas
     try {
       var respuesta = await fetch(API_URL + "?data=" + dataSeleccionada + "&barbeiro=" + encodeURIComponent(barbeiro));
-      ocupados = await respuesta.json(); 
-    } catch (e) { console.log(e); }
+      var textoRespuesta = await respuesta.text();
+      if (textoRespuesta && textoRespuesta.trim() !== "") {
+        ocupados = JSON.parse(textoRespuesta);
+      }
+    } catch (e) { 
+      console.log("Error de conexión con Sheets: ", e); 
+    }
 
     var bloquesOcupados = [];
-    ocupados.forEach(function(item) {
-      var hItem = (typeof item === 'object') ? item.hora : item;
-      var blq = (typeof item === 'object') ? parseInt(item.bloques) : 1;
-      var t = hItem.toString().trim().substring(0, 5);
-      var idx = horariosBase.indexOf(t);
-      if (idx !== -1) {
-        for (var b = 0; b < blq; b++) {
-          if ((idx + b) < horariosBase.length) bloquesOcupados.push(horariosBase[idx + b]);
+    if (Array.isArray(ocupados)) {
+      ocupados.forEach(function(item) {
+        var hItem = (typeof item === 'object' && item !== null) ? item.hora : item;
+        var blq = (typeof item === 'object' && item !== null) ? parseInt(item.bloques) : 1;
+        if (hItem) {
+          var t = hItem.toString().trim().substring(0, 5);
+          var idx = horariosBase.indexOf(t);
+          if (idx !== -1) {
+            for (var b = 0; b < blq; b++) {
+              if ((idx + b) < horariosBase.length) bloquesOcupados.push(horariosBase[idx + b]);
+            }
+          }
         }
-      }
-    });
+      });
+    }
 
     var agora = new Date();
+    // Ajustar zona horaria local para consistencia
     var hoyStr = agora.getFullYear() + "-" + String(agora.getMonth() + 1).padStart(2, '0') + "-" + String(agora.getDate()).padStart(2, '0');
     var horaActualStr = String(agora.getHours()).padStart(2, '0') + ":" + String(agora.getMinutes()).padStart(2, '0');
 
@@ -319,8 +330,10 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
     datosEnvio.append("servico", servicoVal);
     datosEnvio.append("barbeiro", barbeiroVal);
 
+    // PARCHE DE SEGURIDAD POST: Modo no-cors para forzar entrada en servidores ajenos
     fetch(API_URL, {
       method: "POST",
+      mode: "no-cors",
       body: datosEnvio.toString(),
       headers: { "Content-Type": "application/x-www-form-urlencoded" }
     }).then(function() {
@@ -330,7 +343,8 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
       triggerCargaHoras();
       btn.disabled = false;
       btn.innerText = "Agendar Horário ✅";
-    }).catch(function() { 
+    }).catch(function(err) { 
+      console.log("Error en envío POST: ", err);
       document.getElementById("confirmacao").style.display = "none";
       btn.disabled = false; 
       btn.innerText = "Agendar Horário ✅";
