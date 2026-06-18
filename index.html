@@ -6,7 +6,7 @@
 <title>David Barber Studio</title>
 
 <style>
-/* RESET EXACTO DE ARMANDO (ADIÓS PANTALLA CONGELADA) */
+/* RESET EXACTO DE ARMANDO */
 body, html {
   margin: 0;
   padding: 0;
@@ -28,9 +28,12 @@ body, html {
   align-items: center;
   z-index: 99999;
 }
+
+/* TAMAÑO DEL LOGO AGRANDADO A TU MEDIDA */
 #loader img {
-  width: 340px;
+  width: 360px; /* Se aumentó de 280px a 360px para que se vea más grande */
 }
+
 .loader-bar {
   width: 200px;
   height: 6px;
@@ -39,13 +42,16 @@ body, html {
   border-radius: 10px;
   overflow: hidden;
 }
+
 .loader-bar span {
   display: block;
   height: 100%;
   width: 0%;
   background: #D4AF37;
-  animation: loading 1.5s forwards;
+  /* TIEMPO AJUSTADO: Se cambió de 1.5s a 2.5s para que se quede un poquito más */
+  animation: loading 2.5s forwards;
 }
+
 @keyframes loading {
   0% { width: 0; }
   100% { width: 100%; }
@@ -129,11 +135,11 @@ body {
   transform: translate(-50%, -50%);
   width: 130%;
   height: 130%;
-  background-image: url("https://i.ibb.co/dsPsJhgy/1781700842770.png");
+  background-image: url("https://i.ibb.co/mV1f818y/1781696958845.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.08; /* Marca de agua sutil */
+  opacity: 0.08;
   z-index: 0;
   pointer-events: none;
 }
@@ -144,7 +150,7 @@ body {
   z-index: 1;
 }
 
-/* BARBEROS GESTIÓN EN TARJETA */
+/* BARBEROS */
 .barbeiros {
   display: flex;
   justify-content: center;
@@ -239,15 +245,6 @@ button:disabled {
   border-radius: 10px;
   border: 1px solid #c5a059;
 }
-
-/* SPINNER */
-.loading-horas {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #c5a059;
-  font-weight: bold;
-}
 </style>
 </head>
 
@@ -317,10 +314,11 @@ button:disabled {
   const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHur-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
   window.addEventListener("load", function(){
+    /* TIEMPO DEL SCRIPT: Ajustado a 2200ms para coordinar con la barra */
     setTimeout(function(){
       var loader = document.getElementById("loader");
       if(loader) loader.style.display = "none";
-    }, 2000);
+    }, 2200);
     
     var hoje = new Date();
     var mes = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -371,7 +369,8 @@ button:disabled {
     var ocupados = [];
 
     try {
-      var respuesta = await fetch(API_URL + "?data=" + dataSeleccionada + "&barbeiro=" + encodeURIComponent(barbeiro));
+      /* CORRECCIÓN CRÍTICA DE BLOQUEO: Se cambió "barbeiro" por "barbero" para alinearse exactamente con tu Script.gs */
+      var respuesta = await fetch(API_URL + "?data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
       ocupados = await respuesta.json(); 
     } catch (e) { console.log(e); }
 
