@@ -29,9 +29,8 @@ body, html {
   z-index: 99999;
 }
 
-/* TAMAÑO DEL LOGO EN LA PANTALLA DE CARGA */
 #loader img {
-  width: 360px; /* Tamaño grande ajustado */
+  width: 360px;
 }
 
 .loader-bar {
@@ -48,7 +47,6 @@ body, html {
   height: 100%;
   width: 0%;
   background: #D4AF37;
-  /* TIEMPO AJUSTADO: 2.5 segundos para que se quede un poco más */
   animation: loading 2.5s forwards;
 }
 
@@ -126,7 +124,7 @@ body {
   overflow: hidden;
 }
 
-/* NUEVO LOGO DE FONDO AJUSTADO */
+/* LOGO DE FONDO NUEVO COMPLETAMENTE ADAPTADO */
 #form-container::before {
   content: "";
   position: absolute;
@@ -135,11 +133,11 @@ body {
   transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
-  background-image: url("https://i.ibb.co/dsPsJhgy/1781700842770.png"); /* Tu nuevo logo */
+  background-image: url("https://i.ibb.co/dsPsJhgy/1781700842770.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.06; /* Opacidad sutil para que no tape las letras */
+  opacity: 0.06;
   z-index: 0;
   pointer-events: none;
 }
@@ -310,11 +308,10 @@ button:disabled {
 (function(){
   "use strict";
 
-  // URL DE TU API GOOGLE APPS SCRIPT
+  // URL DE CONEXIÓN DE STUDIO BARBER
   const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHur-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
   window.addEventListener("load", function(){
-    /* TIEMPO COORDINADO CON LA ANIMACIÓN (2.2 segundos) */
     setTimeout(function(){
       var loader = document.getElementById("loader");
       if(loader) loader.style.display = "none";
@@ -369,8 +366,8 @@ button:disabled {
     var ocupados = [];
 
     try {
-      /* CONSULTA DE BLOQUEO CON EL PARÁMETRO "barbero" QUE TU SCRIPT ENTIENDE */
-      var respuesta = await fetch(API_URL + "?data=" + dataSeleccionada + "&barbero=" + encodeURIComponent(barbeiro));
+      /* Línea 22 de tu script: acepta 'barbeiro' o 'barbero' */
+      var respuesta = await fetch(API_URL + "?data=" + dataSeleccionada + "&barbeiro=" + encodeURIComponent(barbeiro));
       ocupados = await respuesta.json(); 
     } catch (e) { console.log(e); }
 
@@ -465,8 +462,8 @@ button:disabled {
 
     document.getElementById("confirmacao").style.display = "block";
 
-    /* PARCHE DE GUARDADO EXCEL: Enviando las variables en español exactas para tu doPost */
-    var datosEnvio = new URLSearchParams();
+    /* LA SOLUCIÓN FINAL: Empaquetado como FormData nativo para sincronizar con tu e.parameter */
+    var datosEnvio = new FormData();
     datosEnvio.append("data", dataVal);
     datosEnvio.append("hora", horaVal);
     datosEnvio.append("cliente", nomeVal);
@@ -476,7 +473,8 @@ button:disabled {
 
     fetch(API_URL, {
       method: "POST",
-      body: datosEnvio
+      body: datosEnvio,
+      mode: "no-cors" /* Evita bloqueos de seguridad de navegación cruzada */
     }).then(function() {
       document.getElementById("nome").value = ""; 
       document.getElementById("telefone").value = "";
