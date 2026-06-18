@@ -6,253 +6,118 @@
 <title>David Barber Studio</title>
 
 <style>
-/* RESET DE PÁGINA */
 body, html {
   margin: 0;
   padding: 0;
   background: #000;
   min-height: 100%;
 }
-
-/* PANTALLA DE CARGA (LOADER) */
 #loader {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   background: #000;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
   z-index: 99999;
 }
-
-#loader img {
-  width: 360px;
-}
-
+#loader img { width: 360px; }
 .loader-bar {
-  width: 200px;
-  height: 6px;
-  background: #333;
-  margin-top: 20px;
-  border-radius: 10px;
-  overflow: hidden;
+  width: 200px; height: 6px;
+  background: #333; margin-top: 20px;
+  border-radius: 10px; overflow: hidden;
 }
-
 .loader-bar span {
-  display: block;
-  height: 100%;
-  width: 0%;
-  background: #D4AF37;
-  animation: loading 2.5s forwards;
+  display: block; height: 100%; width: 0%;
+  background: #D4AF37; animation: loading 2.5s forwards;
 }
+@keyframes loading { 0% { width: 0; } 100% { width: 100%; } }
 
-@keyframes loading {
-  0% { width: 0; }
-  100% { width: 100%; }
-}
-
-/* ESTILOS DEL CUERPO PRINCIPAL */
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
-  color: #ddd;
-  text-align: center;
-  padding: 20px;
+  color: #ddd; text-align: center; padding: 20px;
   animation: fadeIn 1s ease;
 }
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* INICIALES DB */
 .db-header {
   font-family: 'Times New Roman', Georgia, serif;
-  font-size: 54px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  line-height: 1;
-  margin: 5px 0 2px 0;
+  font-size: 54px; font-weight: bold; letter-spacing: 2px;
+  line-height: 1; margin: 5px 0 2px 0;
   background: linear-gradient(135deg, #967433 0%, #fdf0cd 30%, #c5a059 70%, #ffffff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 0 8px rgba(197,160,89,0.5));
 }
-
-/* TÍTULO PRINCIPAL */
 .titulo {
   font-family: 'Times New Roman', Georgia, serif;
-  font-size: 22px;
-  font-weight: bold;
-  letter-spacing: 4px;
-  margin: 0 0 6px 0;
+  font-size: 22px; font-weight: bold; letter-spacing: 4px; margin: 0 0 6px 0;
   background: linear-gradient(135deg, #c5a059 0%, #fdf0cd 50%, #c5a059 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 .slogan {
-  font-size: 10px;
-  color: #ffffff;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  margin-bottom: 14px;
-  opacity: 0.85;
+  font-size: 10px; color: #ffffff; letter-spacing: 4px;
+  text-transform: uppercase; margin-bottom: 14px; opacity: 0.85;
 }
 .horarios-info {
-  font-size: 12px;
-  color: #c5a059;
-  line-height: 1.5;
-  opacity: 0.85;
-  margin-bottom: 15px;
-  border-bottom: 1px dashed #2c2514;
-  padding-bottom: 15px;
+  font-size: 12px; color: #c5a059; line-height: 1.5;
+  opacity: 0.85; margin-bottom: 15px;
+  border-bottom: 1px dashed #2c2514; padding-bottom: 15px;
 }
-
-/* CONTENEDOR DEL FORMULARIO */
 #form-container {
-  position: relative;
-  max-width: 420px;
-  margin: auto;
-  padding: 25px;
-  border-radius: 14px;
-  background: #111;
-  border: 1px solid #c5a059;
-  box-shadow: 0 0 25px rgba(197, 160, 89, 0.25);
+  position: relative; max-width: 420px; margin: auto;
+  padding: 25px; border-radius: 14px; background: #111;
+  border: 1px solid #c5a059; box-shadow: 0 0 25px rgba(197, 160, 89, 0.25);
   overflow: hidden;
 }
-
-/* LOGO DE FONDO METALIZADO */
 #form-container::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
+  content: ""; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); width: 100%; height: 100%;
   background-image: url("https://i.ibb.co/dsPsJhgy/1781700842770.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.06;
-  z-index: 0;
-  pointer-events: none;
+  background-size: contain; background-repeat: no-repeat; background-position: center;
+  opacity: 0.06; z-index: 0; pointer-events: none;
 }
+#form-container form, #confirmacao { position: relative; z-index: 1; }
 
-#form-container form,
-#confirmacao {
-  position: relative;
-  z-index: 1;
-}
-
-/* SECCIÓN BARBEROS */
-.barbeiros {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 10px 0 20px 0;
-}
+.barbeiros { display: flex; justify-content: center; gap: 20px; margin: 10px 0 20px 0; }
 .card {
-  background: #000;
-  border-radius: 14px;
-  padding: 12px;
-  width: 115px;
-  cursor: pointer;
-  transition: 0.3s;
-  border: 2px solid transparent;
+  background: #000; border-radius: 14px; padding: 12px; width: 115px;
+  cursor: pointer; transition: 0.3s; border: 2px solid transparent;
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
-.card img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #c5a059;
-}
-.card span {
-  display: block;
-  margin-top: 6px;
-  font-weight: bold;
-}
-.card.active {
-  border: 2px solid #fdf0cd;
-  box-shadow: 0 0 12px rgba(197, 160, 89, 0.6);
-}
+.card img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #c5a059; }
+.card span { display: block; margin-top: 6px; font-weight: bold; }
+.card.active { border: 2px solid #fdf0cd; box-shadow: 0 0 12px rgba(197, 160, 89, 0.6); }
 
-/* ENTRADAS Y TEXTOS */
 label {
-  display: block;
-  margin: 14px 0 6px;
-  font-weight: bold;
-  font-size: 13px;
-  text-align: left;
-  color: #8a8a8a;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  display: block; margin: 14px 0 6px; font-weight: bold; font-size: 13px;
+  text-align: left; color: #8a8a8a; text-transform: uppercase; letter-spacing: 1px;
 }
 select, input {
-  width: 90%;
-  padding: 14px;
-  margin-bottom: 12px;
-  border-radius: 10px;
-  border: 1px solid #333;
-  background: #000;
-  color: #ffffff;
-  font-size: 16px;
+  width: 90%; padding: 14px; margin-bottom: 12px; border-radius: 10px;
+  border: 1px solid #333; background: #000; color: #ffffff; font-size: 16px;
   box-sizing: border-box;
 }
-select:focus, input:focus {
-  outline: none;
-  border: 1px solid #c5a059;
-  box-shadow: 0 0 8px rgba(197, 160, 89, 0.5);
-}
+select:focus, input:focus { outline: none; border: 1px solid #c5a059; box-shadow: 0 0 8px rgba(197, 160, 89, 0.5); }
 
-/* BOTÓN AGENDAR */
 button {
-  background: linear-gradient(90deg, #967433, #c5a059);
-  color: #000;
-  border: none;
-  padding: 14px;
-  font-size: 17px;
-  font-weight: bold;
-  border-radius: 12px;
-  cursor: pointer;
-  margin-top: 15px;
-  width: 90%;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  background: linear-gradient(90deg, #967433, #c5a059); color: #000;
+  border: none; padding: 14px; font-size: 17px; font-weight: bold;
+  border-radius: 12px; cursor: pointer; margin-top: 15px; width: 90%;
+  text-transform: uppercase; letter-spacing: 1px;
 }
-button:disabled {
-  background: #222222;
-  color: #555555;
-  cursor: not-allowed;
-}
+button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 
-/* MENSAJE DE ESPERA */
 #confirmacao {
-  display: none;
-  margin-top: 15px;
-  color: #fdf0cd;
-  font-weight: bold;
-  font-size: 15px;
-  background: #110f0a;
-  padding: 14px;
-  border-radius: 10px;
-  border: 1px solid #c5a059;
+  display: none; margin-top: 15px; color: #fdf0cd; font-weight: bold; font-size: 15px;
+  background: #110f0a; padding: 14px; border-radius: 10px; border: 1px solid #c5a059;
 }
 </style>
 </head>
-
 <body>
 
 <div id="loader">
   <img src="https://i.ibb.co/Mk0cWNvk/1781700650976.png" alt="Logo">
-  <div class="loader-bar">
-    <span></span>
-  </div>
+  <div class="loader-bar"><span></span></div>
 </div>
 
 <div class="db-header">DB</div>
@@ -266,9 +131,7 @@ button:disabled {
 </div>
 
 <div id="form-container">
-
   <form id="agendaForm">
-
     <label>💈 Profissional</label>
     <div class="barbeiros">
       <div class="card active" onclick="seleccionarBarber('David', this)">
@@ -300,7 +163,6 @@ button:disabled {
     
     <button type="button" id="btnAgendar" onclick="solicitarAgendamento()">Agendar Horário ✅</button>
   </form>
-
   <div id="confirmacao">Enviando agendamento para o sistema... por favor, aguarde. ⌛</div>
 </div>
 
@@ -308,7 +170,7 @@ button:disabled {
 (function(){
   "use strict";
 
-  // URL DE ENLACE DE STUDIO BARBER 
+  // URL DE TU IMPLEMENTACIÓN DE WEB APP (TERMINA EN /exec)
   const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHur-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
   window.addEventListener("load", function(){
@@ -321,12 +183,6 @@ button:disabled {
     var mes = String(hoje.getMonth() + 1).padStart(2, '0');
     var dia = String(hoje.getDate()).padStart(2, '0');
     document.getElementById("data").min = hoje.getFullYear() + "-" + mes + "-" + dia;
-  });
-
-  window.addEventListener("pageshow", function(){
-    document.getElementById("cliente").value = "";
-    document.getElementById("telefone").value = "";
-    document.getElementById("servico").selectedIndex = 0;
   });
 
   window.seleccionarBarber = function(nome, elemento) {
@@ -384,16 +240,14 @@ button:disabled {
     });
 
     var agora = new Date();
-    var hoyStr = agora.getFullYear() + "-" + String(agora.getMonth() + 1).padStart(2, '0');
-    var hoyDia = String(agora.getDate()).padStart(2, '0');
-    var hoyStrFinal = hoyStr + "-" + hoyDia;
+    var hoyStr = agora.getFullYear() + "-" + String(agora.getMonth() + 1).padStart(2, '0') + "-" + String(agora.getDate()).padStart(2, '0');
     var horaActualStr = String(agora.getHours()).padStart(2, '0') + ":" + String(agora.getMinutes()).padStart(2, '0');
 
     selectHora.innerHTML = "";
 
     for (var i = 0; i < horariosBase.length; i++) {
       var h = horariosBase[i];
-      var pasoHora = (dataSeleccionada === hoyStrFinal && h <= horaActualStr);
+      var pasoHora = (dataSeleccionada === hoyStr && h <= horaActualStr);
       var estaOcupado = bloquesOcupados.includes(h);
       var esIndisponivel = false;
 
@@ -426,17 +280,13 @@ button:disabled {
     }
 
     if(disponibles === 0){
-      selectHora.innerHTML = "<option value='' disabled selected>Sem horários disponíveis — escolha outra data</option>";
+      selectHora.innerHTML = "<option value='' disabled selected>Sem horários...</option>";
     } else {
       var optSeleccione = document.createElement("option");
       optSeleccione.text = "Selecione o seu horário..."; optSeleccione.disabled = true; optSeleccione.selected = true;
       selectHora.insertBefore(optSeleccione, selectHora.firstChild);
     }
   }
-
-  document.addEventListener("DOMContentLoaded", function(){
-    setTimeout(triggerCargaHoras, 100);
-  });
 
   window.solicitarAgendamento = function() {
     var btn = document.getElementById("btnAgendar");
@@ -461,7 +311,6 @@ button:disabled {
 
     document.getElementById("confirmacao").style.display = "block";
 
-    // Empaquetado de datos con nombres idénticos al e.parameter de tu script .gs
     var datosEnvio = new URLSearchParams();
     datosEnvio.append("data", dataVal);
     datosEnvio.append("hora", horaVal);
@@ -473,9 +322,7 @@ button:disabled {
     fetch(API_URL, {
       method: "POST",
       body: datosEnvio.toString(),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      }
+      headers: { "Content-Type": "application/x-www-form-urlencoded" }
     }).then(function() {
       document.getElementById("cliente").value = ""; 
       document.getElementById("telefone").value = "";
