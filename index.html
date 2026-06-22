@@ -299,7 +299,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
     }
   }
 
-  window.solicitarAgendamento = function() {
+    window.solicitarAgendamento = function() {
     var btn = document.getElementById("btnAgendar");
     if(btn.disabled) return;
 
@@ -314,43 +314,58 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
       alert("Por favor, preencha todos os campos."); return;
     }
 
+    // Bloquear botón y mostrar mensaje de espera
     btn.disabled = true;
     btn.innerText = "Agendando...";
-
-    var textoWhatsApp = "Olá " + barbeiroVal + "!%0A%0A" + "Confirmar agendamento no David Barber Studio:%0A" + "✂️ Serviço: " + servicoVal + "%0A" + "📅 Data: " + dataVal + "%0A" + "⏰ Hora: " + horaVal + "%0A" + "👤 Nome: " + nomeVal;
-    window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
-
+    document.getElementById("confirmacao").innerText = "Enviando agendamento para o sistema... por favor, aguarde. ⌛";
     document.getElementById("confirmacao").style.display = "block";
 
+    // Preparar los datos exactos que espera el doPost
     var datosEnvio = new URLSearchParams();
     datosEnvio.append("data", dataVal);
     datosEnvio.append("hora", horaVal);
     datosEnvio.append("cliente", nomeVal);
     datosEnvio.append("telefone", telefoneVal);
-    datosEnvio.append("servico", servicoVal);
+    datosEnvio.append("servicio", servicoVal); // Cambiado a 'servicio' para que coincida con el backend .gs
     datosEnvio.append("barbeiro", barbeiroVal);
 
-    // PARCHE DE SEGURIDAD POST: Modo no-cors para forzar entrada en servidores ajenos
+    // Petición real al servidor sin bloquear el contenido
     fetch(API_URL, {
       method: "POST",
-      mode: "no-cors",
-      body: datosEnvio.toString(),
+      body: datosEnvio,
       headers: { "Content-Type": "application/x-www-form-urlencoded" }
-    }).then(function() {
-      document.getElementById("cliente").value = ""; 
-      document.getElementById("telefone").value = "";
-      document.getElementById("confirmacao").style.display = "none";
-      triggerCargaHoras();
-      btn.disabled = false;
-      btn.innerText = "Agendar Horário ✅";
-    }).catch(function(err) { 
+    })
+    .then(function(res) { 
+      return res.json(); // Leemos la respuesta JSON del servidor
+    })
+    .then(function(respuesta) {
+      if (respuesta.success) {
+        // SI SE GUARDÓ EN EL SHEETS, se abre el WhatsApp del cliente
+        var textoWhatsApp = "Olá " + barbeiroVal + "!%0A%0A" + "Confirmar agendamento no David Barber Studio:%0A" + "✂️ Serviço: " + servicoVal + "%0A" + "📅 Data: " + dataVal + "%0A" + "⏰ Hora: " + horaVal + "%0A" + "👤 Nome: " + nomeVal;
+        window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
+
+        // Limpiar campos exitosos
+        document.getElementById("cliente").value = ""; 
+        document.getElementById("telefone").value = "";
+        alert(respuesta.message); // Muestra el mensaje de éxito enviado por el script
+      } else {
+        // SI FALLÓ (Ej: Horario duplicado que se ganó otro cliente justo antes)
+        alert(respuesta.message);
+      }
+    })
+    .catch(function(err) { 
       console.log("Error en envío POST: ", err);
+      alert("❌ Ocorreu um erro ao conectar com o servidor. Tente novamente.");
+    })
+    .finally(function() {
+      // Restablecer interfaz
       document.getElementById("confirmacao").style.display = "none";
       btn.disabled = false; 
       btn.innerText = "Agendar Horário ✅";
+      triggerCargaHoras(); // Recargar las horas para actualizar la lista del cliente
     });
   };
-})();
+
 </script>
 </body>
 </html>
