@@ -141,7 +141,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
     </div>
     <input type="hidden" id="barbeiro" value="David">
 
-    <label>✂️ Serviço Ofertado</label>
+    <label>✂️ Servicio Ofertado</label>
     <select id="servico" onchange="triggerCargaHoras()">
       <option value="Corte">Corte Masculino — R$40</option>
       <option value="Barba">Barba — R$30</option>
@@ -299,7 +299,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
     }
   }
 
-    window.solicitarAgendamento = function() {
+  window.solicitarAgendamento = function() {
     var btn = document.getElementById("btnAgendar");
     if(btn.disabled) return;
 
@@ -349,7 +349,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
         document.getElementById("telefone").value = "";
         alert(respuesta.message); // Muestra el mensaje de éxito enviado por el script
       } else {
-        // SI FALLÓ (Ej: Horario duplicado que se ganó otro cliente justo antes)
+        // SI FALLÓ (Ej: Horario duplicado)
         alert(respuesta.message);
       }
     })
@@ -365,7 +365,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
       triggerCargaHoras(); // Recargar las horas para actualizar la lista del cliente
     });
   };
-
+})(); // <--- ¡AQUÍ ESTABA EL DETALLE! Se cerró correctamente la función global.
 </script>
 </body>
 </html>
