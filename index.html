@@ -127,6 +127,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
   async function carregarHorariosDisponiveis(dataSeleccionada) {
     var selectHora = document.getElementById("hora");
     var barbeiro = document.getElementById("barbeiro").value;
+    var servico = document.getElementById("servico").value; // ← AGREGADO
     selectHora.innerHTML = "<option value=''>Carregando horários...</option>";
 
     var partes = dataSeleccionada.split("-");
@@ -153,6 +154,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
       return;
     }
 
+    // Mapear horarios ocupados con sus bloques - YA VIENE DEL SCRIPT
     var bloquesOcupados = [];
     if (Array.isArray(ocupados)) {
       ocupados.forEach(function(item) {
@@ -175,15 +177,33 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
     var horaActualStr = String(agora.getHours()).padStart(2, '0') + ":" + String(agora.getMinutes()).padStart(2, '0');
     selectHora.innerHTML = "";
 
+    // PARCHE: Verificar cuántos bloques necesita el servicio actual
+    var bloquesNecesarios = (servico === "Corte e Barba")? 2 : 1;
+
     for (var i = 0; i < horariosBase.length; i++) {
       var h = horariosBase[i];
       var pasoHora = (dataSeleccionada === hoyStr && h <= horaActualStr);
       var estaOcupado = bloquesOcupados.includes(h);
-      
+      var esIndisponivel = false;
+
+      // PARCHE: Si necesita 2 bloques, verificar que el siguiente también esté libre
+      for (var b = 0; b < bloquesNecesarios; b++) {
+        if ((i + b) >= horariosBase.length) { 
+          esIndisponivel = true; 
+          break; 
+        }
+        if (bloquesOcupados.includes(horariosBase[i + b])) {
+          if (b === 0) estaOcupado = true; 
+          else esIndisponivel = true;
+          break;
+        }
+      }
+
       var opt = document.createElement("option");
       opt.value = h; opt.text = h;
       if (pasoHora) { opt.disabled = true; opt.text = h + " (Já passou)"; }
       else if (estaOcupado) { opt.disabled = true; opt.text = h + " (Ocupado)"; }
+      else if (esIndisponivel) { opt.disabled = true; opt.text = h + " (Indisponível)"; }
       selectHora.add(opt);
     }
 
@@ -195,6 +215,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
       selectHora.insertBefore(optSeleccione, selectHora.firstChild);
     }
   }
+
 
   window.solicitarAgendamento = function() {
     var btn = document.getElementById("btnAgendar");
