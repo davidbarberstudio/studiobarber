@@ -187,17 +187,21 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
       var esIndisponivel = false;
 
       // PARCHE: Si necesita 2 bloques, verificar que el siguiente también esté libre
-      for (var b = 0; b < bloquesNecesarios; b++) {
-        if ((i + b) >= horariosBase.length) { 
-          esIndisponivel = true; 
-          break; 
-        }
-        if (bloquesOcupados.includes(horariosBase[i + b])) {
-          if (b === 0) estaOcupado = true; 
-          else esIndisponivel = true;
-          break;
-        }
-      }
+      // Si el servicio necesita 2 bloques, revisa que el slot actual Y el siguiente estén libres
+for (var b = 0; b < bloquesNecesarios; b++) {
+  if ((i + b) >= horariosBase.length) { 
+    esIndisponivel = true; // No cabe al final del día
+    break; 
+  }
+  if (bloquesOcupados.includes(horariosBase[i + b])) {
+    esIndisponivel = true; // Si este o el siguiente está ocupado, no se puede
+    break;
+  }
+}
+// Si el slot actual ya está ocupado por otra cita, márcalo ocupado normal
+if (bloquesOcupados.includes(h)) {
+  estaOcupado = true;
+}
 
       var opt = document.createElement("option");
       opt.value = h; opt.text = h;
