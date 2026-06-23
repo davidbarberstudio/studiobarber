@@ -9,7 +9,7 @@
 body, html {
   margin: 0;
   padding: 0;
-  background: #000; 
+  background: #000;
   min-height: 100%;
 }
 #loader {
@@ -138,6 +138,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
         <img src="https://i.ibb.co/B5GDCLGN/IMG-20241012-152952-2.jpg" alt="David">
         <span>David</span>
       </div>
+      <!-- Para añadir otro barbero, solo copia esta card y cambia el nombre e imagen -->
     </div>
     <input type="hidden" id="barbeiro" value="David">
 
@@ -170,14 +171,14 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 (function(){
   "use strict";
 
-  // URL DE TU IMPLEMENTACIÓN DE WEB APP (Asegúrate de que sea tu URL real terminada en /exec)
+  // URL DE TU IMPLEMENTACIÓN DE WEB APP (YA ACTUALIZADA)
   const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHur-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
   window.addEventListener("load", function(){
     setTimeout(function(){
       var loader = document.getElementById("loader");
       if(loader) loader.style.display = "none";
-    }, 2200); 
+    }, 2200);
     
     var hoje = new Date();
     var mes = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -187,6 +188,9 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 
   window.seleccionarBarber = function(nome, elemento) {
     document.getElementById("barbeiro").value = nome.trim();
+    // Remover clase active de todas las cards
+    document.querySelectorAll('.card').forEach(function(c) { c.classList.remove('active'); });
+    elemento.classList.add('active');
     triggerCargaHoras();
   };
 
@@ -221,7 +225,6 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
     var horariosBase = obtenerMatrizHorarios(diaSemana);
     var ocupados = [];
 
-    // PARCHE DE SEGURIDAD INTERNA: Lectura robusta para evitar caídas silenciosas
     try {
       var respuesta = await fetch(API_URL + "?data=" + dataSeleccionada + "&barbeiro=" + encodeURIComponent(barbeiro));
       var textoRespuesta = await respuesta.text();
@@ -250,7 +253,6 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
     }
 
     var agora = new Date();
-    // Ajustar zona horaria local para consistencia
     var hoyStr = agora.getFullYear() + "-" + String(agora.getMonth() + 1).padStart(2, '0') + "-" + String(agora.getDate()).padStart(2, '0');
     var horaActualStr = String(agora.getHours()).padStart(2, '0') + ":" + String(agora.getMinutes()).padStart(2, '0');
 
@@ -314,43 +316,37 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
       alert("Por favor, preencha todos os campos."); return;
     }
 
-    // Bloquear botón y mostrar mensaje de espera
     btn.disabled = true;
     btn.innerText = "Agendando...";
     document.getElementById("confirmacao").innerText = "Enviando agendamento para o sistema... por favor, aguarde. ⌛";
     document.getElementById("confirmacao").style.display = "block";
 
-    // Preparar los datos exactos que espera el doPost
     var datosEnvio = new URLSearchParams();
     datosEnvio.append("data", dataVal);
     datosEnvio.append("hora", horaVal);
     datosEnvio.append("cliente", nomeVal);
     datosEnvio.append("telefone", telefoneVal);
-    datosEnvio.append("servicio", servicoVal); // Cambiado a 'servicio' para que coincida con el backend .gs
+    datosEnvio.append("servicio", servicoVal);
     datosEnvio.append("barbeiro", barbeiroVal);
 
-    // Petición real al servidor sin bloquear el contenido
     fetch(API_URL, {
       method: "POST",
       body: datosEnvio,
       headers: { "Content-Type": "application/x-www-form-urlencoded" }
     })
     .then(function(res) { 
-      return res.json(); // Leemos la respuesta JSON del servidor
+      return res.json();
     })
     .then(function(respuesta) {
       if (respuesta.success) {
-        // SI SE GUARDÓ EN EL SHEETS, se abre el WhatsApp del cliente
         var textoWhatsApp = "Olá " + barbeiroVal + "!%0A%0A" + "Confirmar agendamento no David Barber Studio:%0A" + "✂️ Serviço: " + servicoVal + "%0A" + "📅 Data: " + dataVal + "%0A" + "⏰ Hora: " + horaVal + "%0A" + "👤 Nome: " + nomeVal;
         window.open("https://wa.me/5595991554792?text=" + textoWhatsApp, "_blank");
 
-        // Limpiar campos exitosos
         document.getElementById("cliente").value = ""; 
         document.getElementById("telefone").value = "";
-        alert(respuesta.message); // Muestra el mensaje de éxito enviado por el script
-      } else {
-        // SI FALLÓ (Ej: Horario duplicado)
         alert(respuesta.message);
+      } else {
+        alert("❌ " + respuesta.message);
       }
     })
     .catch(function(err) { 
@@ -358,14 +354,13 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
       alert("❌ Ocorreu um erro ao conectar com o servidor. Tente novamente.");
     })
     .finally(function() {
-      // Restablecer interfaz
       document.getElementById("confirmacao").style.display = "none";
       btn.disabled = false; 
       btn.innerText = "Agendar Horário ✅";
-      triggerCargaHoras(); // Recargar las horas para actualizar la lista del cliente
+      triggerCargaHoras();
     });
   };
-})(); // <--- ¡AQUÍ ESTABA EL DETALLE! Se cerró correctamente la función global.
+})();
 </script>
 </body>
 </html>
