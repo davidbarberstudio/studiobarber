@@ -120,13 +120,11 @@ function triggerCargaHoras() {
     if (data) carregarHorariosDisponiveis(data);
 }
 
-// HORÁRIOS POR DÍA - SEM ALMOÇO
 function getHorariosDoDia(dataStr) {
     const data = new Date(dataStr + 'T12:00:00');
-    const diaSemana = data.getDay(); // 0=Domingo, 1=Segunda,..., 6=Sábado
+    const diaSemana = data.getDay();
     const horarios = [];
 
-    // Segunda: 08:30-11:00, 13:00-17:30
     if (diaSemana === 1) {
         for (let h = 8; h <= 10; h++) {
             horarios.push(`${h.toString().padStart(2,'0')}:30`);
@@ -139,7 +137,6 @@ function getHorariosDoDia(dataStr) {
         }
         horarios.push('17:30');
     }
-    // Terça a Sexta: 08:30-11:00, 13:00-18:00
     else if (diaSemana >= 2 && diaSemana <= 5) {
         for (let h = 8; h <= 10; h++) {
             horarios.push(`${h.toString().padStart(2,'0')}:30`);
@@ -152,7 +149,6 @@ function getHorariosDoDia(dataStr) {
         }
         horarios.push('18:00');
     }
-    // Sábado: 08:00-11:30, 13:00-17:00
     else if (diaSemana === 6) {
         for (let h = 8; h <= 11; h++) {
             horarios.push(`${h.toString().padStart(2,'0')}:00`);
@@ -230,8 +226,8 @@ async function carregarHorariosDisponiveis(data) {
         horariosBloqueados = await response.json();
 
         const todosHorarios = getHorariosDoDia(data);
-
         const horariosOcupados = new Set();
+
         horariosBloqueados.forEach(item => {
             const horaInicio = item.hora;
             const bloques = item.bloques || 1;
