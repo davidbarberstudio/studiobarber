@@ -131,7 +131,6 @@
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHurr-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec';
 let mapaServicos = {};
 
-// FIX: Horarios completos hasta 19:00
 const horariosManha = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30'];
 const horariosTarde = ['13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00'];
 
@@ -238,16 +237,16 @@ async function carregarHorarios() {
                 return;
             }
 
-            // FIX: Solo bloquea "Não cabe" si el SIGUIENTE slot existe y está ocupado
-            // Ya NO bloquea 11:00 porque 11:30 no existe en turno mañana
+            // FIX FINAL: Solo bloquea si el siguiente slot existe Y está ocupado
+            // Si es 11:00 y 11:30 no existe en ese día, deja agendar igual
             if (bloquesNecesarios > 1) {
                 let noCabe = false;
                 for (let i = 1; i < bloquesNecesarios; i++) {
-                    // Si el siguiente slot NO existe, permite agendar igual
-                    if (idx + i >= todosHorarios.length) break;
-
-                    // Si el siguiente slot está ocupado
-                    if (horariosOcupados.has(todosHorarios[idx + i])) {
+                    const siguienteSlot = todosHorarios[idx + i];
+                    // Si el siguiente slot no existe, NO bloquea
+                    if (!siguienteSlot) break;
+                    // Si existe pero está ocupado, bloquea
+                    if (horariosOcupados.has(siguienteSlot)) {
                         noCabe = true;
                         break;
                     }
