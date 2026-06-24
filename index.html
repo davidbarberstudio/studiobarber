@@ -97,6 +97,12 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHurr-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
 let horariosBloqueados = [];
+let bloquesServico = {
+  "Corte": 1,
+  "Barba": 1,
+  "Corte e Barba": 2,
+  "Sobrancelha": 1
+};
 
 window.addEventListener('load', () => {
     setTimeout(() => {
@@ -217,8 +223,19 @@ function ocultarAgendando() {
     if (overlay) overlay.remove();
 }
 
+function sumarBloque(horaStr, bloques) {
+    const [h, m] = horaStr.split(':').map(Number);
+    const totalMin = h * 60 + m + (bloques * 30);
+    const nuevaH = Math.floor(totalMin / 60);
+    const nuevaM = totalMin % 60;
+    return `${nuevaH.toString().padStart(2,'0')}:${nuevaM.toString().padStart(2,'0')}`;
+}
+
 async function carregarHorariosDisponiveis(data) {
     const select = document.getElementById('hora');
+    const servico = document.getElementById('servico').value;
+    const bloquesNecesarios = bloquesServico[servico] || 1;
+
     select.innerHTML = '<option value="">Carregando...</option>';
 
     try {
@@ -238,29 +255,34 @@ async function carregarHorariosDisponiveis(data) {
         });
 
         select.innerHTML = '<option value="">Selecione um horário</option>';
+
         todosHorarios.forEach(hora => {
             const option = document.createElement('option');
             option.value = hora;
             option.textContent = hora;
 
-            if (horariosOcupados.has(hora)) {
+            let bloqueado = false;
+
+            // PARCHE: SI ES CORTE E BARBA, VERIFICA QUE TENGA 2 BLOQUES LIBRES
+            for (let b = 0; b < bloquesNecesarios; b++) {
+                const horaChecar = sumarBloque(hora, b);
+                if (horariosOcupados.has(horaChecar) ||!todosHorarios.includes(horaChecar)) {
+                    bloqueado = true;
+                    break;
+                }
+            }
+
+            if (bloqueado) {
                 option.disabled = true;
                 option.textContent = hora + ' - Ocupado';
             }
+
             select.appendChild(option);
         });
 
     } catch (error) {
         select.innerHTML = '<option value="">Erro ao carregar</option>';
     }
-}
-
-function sumarBloque(horaStr, bloques) {
-    const [h, m] = horaStr.split(':').map(Number);
-    const totalMin = h * 60 + m + (bloques * 30);
-    const nuevaH = Math.floor(totalMin / 60);
-    const nuevaM = totalMin % 60;
-    return `${nuevaH.toString().padStart(2,'0')}:${nuevaM.toString().padStart(2,'0')}`;
 }
 
 async function solicitarAgendamento() {
