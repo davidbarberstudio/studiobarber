@@ -87,172 +87,215 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 </div>
 
 <script>
-(function(){
-  "use strict";
-  // ⚠️ PEGA LA URL NUEVA DE TU IMPLEMENTACIÓN AQUÍ
-  const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHurr-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
-  const WHATSAPP_BARBEIRO = "5595991554792";
+const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHurr-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec";
 
-  window.addEventListener("load", function(){
-    setTimeout(function(){
-      var loader = document.getElementById("loader");
-      if(loader) loader.style.display = "none";
-    }, 2200);
-    
-    var hoje = new Date();
-    var mes = String(hoje.getMonth() + 1).padStart(2, '0');
-    var dia = String(hoje.getDate()).padStart(2, '0');
-    document.getElementById("data").min = hoje.getFullYear() + "-" + mes + "-" + dia;
-  });
+let horariosBloqueados = [];
 
-  window.seleccionarBarber = function(nome, elemento) {
-    document.getElementById("barbeiro").value = nome.trim();
-    document.querySelectorAll('.card').forEach(function(c) { c.classList.remove('active'); });
-    elemento.classList.add('active');
-    triggerCargaHoras();
-  };
+// TELA "AGENDANDO" EM PORTUGUÊS
+function mostrarAgendando() {
+    const overlay = document.createElement('div');
+    overlay.id = 'overlay-agendando';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.92);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(8px);
+    `;
 
-  window.triggerCargaHoras = function() {
-    var dataVal = document.getElementById("data").value;
-    if (dataVal) carregarHorariosDisponiveis(dataVal);
-  };
+    overlay.innerHTML = `
+        <div style="text-align: center; color: white; padding: 30px; max-width: 400px;">
+            <div style="width: 90px; height: 90px; border: 10px solid #222; border-top: 10px solid #c9a961; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 40px;"></div>
+            <h2 style="font-size: 42px; margin: 0; font-family: 'Oswald', sans-serif; letter-spacing: 2px; text-transform: uppercase;">AGENDANDO...</h2>
+            <p style="font-size: 20px; margin-top: 15px; opacity: 0.9; font-weight: 300;">Por favor, aguarde</p>
+            <p style="font-size: 14px; margin-top: 30px; opacity: 0.6;">Salvando seu horário no sistema</p>
+        </div>
+        <style>
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    `;
+    document.body.appendChild(overlay);
+}
 
-  function obtenerMatrizHorarios(diaSemana) {
-    if (diaSemana === 0) return [];
-    if (diaSemana === 1) return ["08:30","09:00","09:30","10:00","10:30","11:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30"];
-    if (diaSemana === 6) return ["08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30"];
-    return ["08:30","09:00","09:30","10:00","10:30","11:00","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00"];
-  }
+// TELA DE ERRO BONITA EM PORTUGUÊS
+function mostrarErro() {
+    const overlay = document.getElementById('overlay-agendando');
+    if (!overlay) return;
 
-  async function carregarHorariosDisponiveis(dataSeleccionada) {
-    var selectHora = document.getElementById("hora");
-    var barbeiro = document.getElementById("barbeiro").value;
-    selectHora.innerHTML = "<option value=''>Carregando horários...</option>";
+    overlay.innerHTML = `
+        <div style="text-align: center; color: white; padding: 40px; max-width: 450px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 20px; border: 2px solid #c9a961; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
+            <div style="width: 80px; height: 80px; background: #ff4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; font-size: 50px;">
+                ✕
+            </div>
+            <h2 style="font-size: 32px; margin: 0 0 20px 0; font-family: 'Oswald', sans-serif; color: #ff4444;">OPS! ALGO DEU ERRADO</h2>
+            <p style="font-size: 18px; line-height: 1.6; margin: 0 0 15px 0; opacity: 0.95;">
+                Seu agendamento <strong style="color: #c9a961;">NÃO foi realizado</strong>.
+            </p>
+            <p style="font-size: 16px; line-height: 1.6; margin: 0 0 30px 0; opacity: 0.8;">
+                Ocorreu um problema ao salvar no sistema.<br>
+                Por favor, <strong>recarregue a página</strong> e tente novamente.
+            </p>
+            <button onclick="location.reload()" style="
+                background: #c9a961;
+                color: #1a1a1a;
+                border: none;
+                padding: 15px 40px;
+                font-size: 18px;
+                font-weight: 700;
+                border-radius: 10px;
+                cursor: pointer;
+                font-family: 'Oswald', sans-serif;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: all 0.3s;
+            " onmouseover="this.style.transform='scale(1.05)'; this.style.background='#d4b571';"
+               onmouseout="this.style.transform='scale(1)'; this.style.background='#c9a961';">
+                RECARREGAR PÁGINA
+            </button>
+        </div>
+    `;
+}
 
-    var partes = dataSeleccionada.split("-");
-    var dateObj = new Date(partes[0], partes[1] - 1, partes[2]);
-    var diaSemana = dateObj.getDay();
+function ocultarAgendando() {
+    const overlay = document.getElementById('overlay-agendando');
+    if (overlay) overlay.remove();
+}
 
-    if (diaSemana === 0) {
-      selectHora.innerHTML = "<option value=''>Fechado aos Domingos</option>";
-      return;
-    }
-
-    var horariosBase = obtenerMatrizHorarios(diaSemana);
-    var ocupados = [];
+// CARREGAR HORÁRIOS - BLOQUEIO DUPLO
+async function carregarHorariosDisponiveis(data) {
+    const container = document.getElementById('horarios-container');
+    container.innerHTML = '<p style="text-align:center;color:#888;">Carregando horários...</p>';
 
     try {
-      var respuesta = await fetch(API_URL + "?data=" + dataSeleccionada + "&barbeiro=" + encodeURIComponent(barbeiro));
-      var textoRespuesta = await respuesta.text();
-      if (textoRespuesta && textoRespuesta.trim()!== "") {
-        ocupados = JSON.parse(textoRespuesta);
-      }
-    } catch (e) { 
-      console.log("Error GET: ", e); 
-      selectHora.innerHTML = "<option value=''>Erro ao carregar</option>";
-      return;
-    }
+        const response = await fetch(`${API_URL}?data=${data}&barbeiro=David`);
+        horariosBloqueados = await response.json();
 
-    var bloquesOcupados = [];
-    if (Array.isArray(ocupados)) {
-      ocupados.forEach(function(item) {
-        var hItem = (typeof item === 'object' && item!== null)? item.hora : item;
-        var blq = (typeof item === 'object' && item!== null)? parseInt(item.bloques) : 1;
-        if (hItem) {
-          var t = hItem.toString().trim().substring(0, 5);
-          var idx = horariosBase.indexOf(t);
-          if (idx!== -1) {
-            for (var b = 0; b < blq; b++) {
-              if ((idx + b) < horariosBase.length) bloquesOcupados.push(horariosBase[idx + b]);
-            }
-          }
+        const todosHorarios = [];
+        for (let h = 9; h <= 17; h++) {
+            todosHorarios.push(`${h.toString().padStart(2,'0')}:00`);
+            if (h < 17) todosHorarios.push(`${h.toString().padStart(2,'0')}:30`);
         }
-      });
+        todosHorarios.push('17:30');
+
+        const horariosOcupados = new Set();
+        horariosBloqueados.forEach(item => {
+            const horaInicio = item.hora;
+            const bloques = item.bloques || 1;
+
+            for (let b = 0; b < bloques; b++) {
+                const horaBloqueada = sumarBloque(horaInicio, b);
+                horariosOcupados.add(horaBloqueada);
+            }
+        });
+
+        container.innerHTML = '';
+        todosHorarios.forEach(hora => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'horario-btn';
+            btn.textContent = hora;
+            btn.dataset.hora = hora;
+
+            if (horariosOcupados.has(hora)) {
+                btn.classList.add('ocupado');
+                btn.disabled = true;
+            } else {
+                btn.onclick = () => selecionarHorario(hora);
+            }
+            container.appendChild(btn);
+        });
+
+    } catch (error) {
+        container.innerHTML = '<p style="color:red;">Erro ao carregar horários</p>';
+    }
+}
+
+function sumarBloque(horaStr, bloques) {
+    const [h, m] = horaStr.split(':').map(Number);
+    const totalMin = h * 60 + m + (bloques * 30);
+    const nuevaH = Math.floor(totalMin / 60);
+    const nuevaM = totalMin % 60;
+    return `${nuevaH.toString().padStart(2,'0')}:${nuevaM.toString().padStart(2,'0')}`;
+}
+
+function selecionarHorario(hora) {
+    document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selecionado'));
+    document.querySelector(`[data-hora="${hora}"]`).classList.add('selecionado');
+    document.getElementById('hora').value = hora;
+}
+
+// ENVIAR - COM TELA DE ERRO BONITA
+document.getElementById('formAgendamento').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const datos = Object.fromEntries(formData.entries());
+    const msg = document.getElementById('mensagem');
+
+    if (!datos.hora) {
+        msg.textContent = 'Selecione um horário';
+        msg.className = 'msg error';
+        msg.style.display = 'block';
+        return;
     }
 
-    var agora = new Date();
-    var hoyStr = agora.getFullYear() + "-" + String(agora.getMonth() + 1).padStart(2, '0') + "-" + String(agora.getDate()).padStart(2, '0');
-    var horaActualStr = String(agora.getHours()).padStart(2, '0') + ":" + String(agora.getMinutes()).padStart(2, '0');
-    selectHora.innerHTML = "";
+    mostrarAgendando();
 
-    for (var i = 0; i < horariosBase.length; i++) {
-      var h = horariosBase[i];
-      var pasoHora = (dataSeleccionada === hoyStr && h <= horaActualStr);
-      var estaOcupado = bloquesOcupados.includes(h);
-      
-      var opt = document.createElement("option");
-      opt.value = h; opt.text = h;
-      if (pasoHora) { opt.disabled = true; opt.text = h + " (Já passou)"; }
-      else if (estaOcupado) { opt.disabled = true; opt.text = h + " (Ocupado)"; }
-      selectHora.add(opt);
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            body: new URLSearchParams(datos)
+        });
+        const resultado = await response.json();
+
+        if (resultado.success) {
+            // SUCESSO - ESPERA E VAI PRO WHATSAPP
+            setTimeout(() => {
+                ocultarAgendando();
+                msg.textContent = '✅ Agendamento confirmado!';
+                msg.className = 'msg success';
+                msg.style.display = 'block';
+
+                if (resultado.whatsapp) {
+                    location.href = resultado.whatsapp;
+                }
+
+                document.getElementById('formAgendamento').reset();
+                carregarHorariosDisponiveis(datos.data);
+            }, 1200);
+        } else {
+            // ERRO - MOSTRA TELA BONITA DE ERRO
+            setTimeout(() => {
+                mostrarErro();
+            }, 800);
+        }
+
+    } catch (error) {
+        // ERRO DE CONEXÃO - MOSTRA TELA BONITA
+        setTimeout(() => {
+            mostrarErro();
+        }, 800);
     }
+});
 
-    if(selectHora.options.length === 0){
-      selectHora.innerHTML = "<option value='' disabled selected>Sem horários...</option>";
-    } else {
-      var optSeleccione = document.createElement("option");
-      optSeleccione.text = "Selecione o seu horário..."; optSeleccione.disabled = true; optSeleccione.selected = true;
-      selectHora.insertBefore(optSeleccione, selectHora.firstChild);
-    }
-  }
+// INICIAR
+document.getElementById('data').addEventListener('change', (e) => {
+    if (e.target.value) carregarHorariosDisponiveis(e.target.value);
+});
 
-  window.solicitarAgendamento = function() {
-    var btn = document.getElementById("btnAgendar");
-    if(btn.disabled) return;
-
-    var dataVal = document.getElementById("data").value;
-    var horaVal = document.getElementById("hora").value;
-    var nomeVal = document.getElementById("cliente").value.trim();
-    var telefoneVal = document.getElementById("telefone").value.trim();
-    var barbeiroVal = document.getElementById("barbeiro").value;
-    var servicoVal = document.getElementById("servico").value;
-
-    if (!dataVal ||!horaVal || horaVal === "" || horaVal.includes("Selecione") ||!nomeVal ||!telefoneVal) {
-      alert("Por favor, preencha todos os campos."); return;
-    }
-
-    btn.disabled = true;
-    btn.innerText = "Agendando...";
-    document.getElementById("confirmacao").style.display = "block";
-
-    // FIX CORS: Usar FormData en vez de URLSearchParams
-    var formData = new FormData();
-    formData.append("data", dataVal);
-    formData.append("hora", horaVal);
-    formData.append("cliente", nomeVal);
-    formData.append("telefone", telefoneVal);
-    formData.append("servico", servicoVal);
-    formData.append("barbeiro", barbeiroVal);
-
-    fetch(API_URL, {
-      method: "POST",
-      body: formData
-    })
-  .then(function(res) { return res.text(); })
-  .then(function(text) {
-      var respuesta = JSON.parse(text);
-      if (respuesta.success) {
-        var textoWhatsApp = "Olá " + barbeiroVal + "!%0A%0A" + "Confirmar agendamento no David Barber Studio:%0A" + "✂️ Serviço: " + servicoVal + "%0A" + "📅 Data: " + dataVal + "%0A" + "⏰ Hora: " + horaVal + "%0A" + "👤 Nome: " + nomeVal + "%0A📱 Telefone: " + telefoneVal;
-        window.open("https://wa.me/" + WHATSAPP_BARBEIRO + "?text=" + textoWhatsApp, "_blank");
-        document.getElementById("cliente").value = ""; 
-        document.getElementById("telefone").value = "";
-        alert(respuesta.message);
-      } else {
-        alert("❌ " + respuesta.message);
-      }
-    })
-  .catch(function(err) { 
-      console.log("Error POST: ", err);
-      alert("❌ Ocorreu um erro ao conectar com o servidor. Verifique se implementou como 'Cualquier persona'");
-    })
-  .finally(function() {
-      document.getElementById("confirmacao").style.display = "none";
-      btn.disabled = false; 
-      btn.innerText = "Agendar Horário ✅";
-      triggerCargaHoras();
-    });
-  };
-})();
+window.onload = () => {
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('data').value = hoje;
+    carregarHorariosDisponiveis(hoje);
+};
 </script>
 </body>
 </html>
