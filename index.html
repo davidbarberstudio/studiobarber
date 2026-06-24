@@ -6,125 +6,345 @@
     <title>David Barber Studio - Agendamento</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #000;
             color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* SPLASH SCREEN */
+       .splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+       .splash.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+       .splash-logo {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            margin-bottom: 30px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+       .loading-bar {
+            width: 250px;
+            height: 4px;
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+       .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #D4AF37, #B8941F);
+            width: 0%;
+            animation: loading 2s ease-out forwards;
+            box-shadow: 0 0 10px #D4AF37;
+        }
+
+        @keyframes loading {
+            to { width: 100%; }
+        }
+
+       .splash-text {
+            margin-top: 20px;
+            color: #D4AF37;
+            font-size: 14px;
+            letter-spacing: 3px;
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* BACKGROUND FANTASMA */
+       .bg-fantasma {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.ibb.co/B5GDCLGN/IMG-20241012-152952-2.jpg') center/cover no-repeat;
+            opacity: 0.08;
+            z-index: 0;
+            filter: blur(2px);
+        }
+
+       .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.95) 100%);
+            z-index: 1;
+        }
+
+        /* CONTAINER PRINCIPAL */
+       .main-content {
+            position: relative;
+            z-index: 2;
             padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeIn 1s ease 2.2s forwards;
         }
-.container {
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+       .container {
             max-width: 500px;
-            margin: 0 auto;
-            background: #111;
+            width: 100%;
+            background: rgba(17, 17, 17, 0.85);
+            backdrop-filter: blur(10px);
             border: 2px solid #D4AF37;
-            border-radius: 15px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.2);
+            animation: slideUp 0.8s ease 2.5s backwards;
         }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
         h1 {
             text-align: center;
             color: #D4AF37;
-            font-size: 32px;
+            font-size: 36px;
             margin-bottom: 5px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
         }
-.subtitle {
+
+       .subtitle {
             text-align: center;
             color: #ccc;
             font-size: 14px;
             margin-bottom: 20px;
             letter-spacing: 2px;
         }
-.horarios {
+
+       .horarios {
             text-align: center;
             color: #D4AF37;
             font-size: 12px;
             margin-bottom: 25px;
             border-top: 1px dashed #D4AF37;
             border-bottom: 1px dashed #D4AF37;
-            padding: 10px 0;
+            padding: 12px 0;
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 8px;
         }
+
         label {
             display: block;
             margin-top: 15px;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             color: #D4AF37;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.5px;
         }
+
         select, input {
             width: 100%;
-            padding: 12px;
-            background: #000;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.6);
             border: 1px solid #D4AF37;
-            border-radius: 8px;
+            border-radius: 10px;
             color: #fff;
             font-size: 16px;
+            transition: all 0.3s ease;
         }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
         select:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
         }
+
         button {
             width: 100%;
-            padding: 15px;
-            margin-top: 25px;
+            padding: 16px;
+            margin-top: 28px;
             background: linear-gradient(135deg, #D4AF37, #B8941F);
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             color: #000;
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
         }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.5);
+        }
+
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-.loading {
+
+       .loading {
             text-align: center;
             color: #D4AF37;
-            margin-top: 10px;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        /* WATERMARK LOGO */
+       .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            opacity: 0.3;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+       .watermark img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* TOAST CONFIRMACIÓN */
+       .toast {
+            position: fixed;
+            top: 20px;
+            right: -400px;
+            background: linear-gradient(135deg, #D4AF37, #B8941F);
+            color: #000;
+            padding: 16px 24px;
+            border-radius: 10px;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+            z-index: 10000;
+            transition: right 0.5s ease;
+        }
+
+       .toast.show {
+            right: 20px;
+        }
+
+        @media (max-width: 600px) {
+           .container { padding: 25px; }
+            h1 { font-size: 28px; }
+           .splash-logo { width: 150px; height: 150px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>DB</h1>
-        <div class="subtitle">DAVID BARBER STUDIO</div>
-        <div class="subtitle" style="font-size: 11px;">ESTILO, PRECISÃO E CONFIANÇA</div>
-
-        <div class="horarios">
-            🕐 Segunda: 08:30-11:00, 13:00-17:30<br>
-            🕐 Terça a Sexta: 08:30-11:00, 13:00-19:00<br>
-            🕐 Sábado: 08:00-11:30, 13:00-17:00
+    <!-- SPLASH SCREEN -->
+    <div class="splash" id="splash">
+        <img src="https://i.ibb.co/Mk0cWNvk/1781700650976.png" alt="David Barber Studio" class="splash-logo">
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
         </div>
+        <div class="splash-text">CARREGANDO...</div>
+    </div>
 
-        <form id="agendamentoForm">
-            <label>🧑‍💼 PROFISSIONAL</label>
-            <select id="barbeiro">
-                <option value="David">David</option>
-            </select>
+    <!-- BACKGROUND FANTASMA -->
+    <div class="bg-fantasma"></div>
+    <div class="bg-overlay"></div>
 
-            <label>✂️ SERVIÇO OFERTADO</label>
-            <select id="servico" required>
-                <option value="">Carregando...</option>
-            </select>
+    <!-- WATERMARK -->
+    <div class="watermark">
+        <img src="https://i.ibb.co/Mk0cWNvk/1781700650976.png" alt="Logo">
+    </div>
 
-            <label>📅 DATA DO AGENDAMENTO</label>
-            <input type="date" id="data" required>
+    <!-- TOAST -->
+    <div class="toast" id="toast">Agendamento enviado! ✅</div>
 
-            <label>👤 SEU NOME</label>
-            <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="container">
+            <h1>DB</h1>
+            <div class="subtitle">DAVID BARBER STUDIO</div>
+            <div class="subtitle" style="font-size: 11px;">ESTILO, PRECISÃO E CONFIANÇA</div>
 
-            <label>📱 SEU WHATSAPP</label>
-            <input type="tel" id="telefone" placeholder="Ex: 47999999999" required>
+            <div class="horarios">
+                🕐 Segunda: 08:30-11:00, 13:00-17:30<br>
+                🕐 Terça a Sexta: 08:30-11:00, 13:00-19:00<br>
+                🕐 Sábado: 08:00-11:30, 13:00-17:00
+            </div>
 
-            <label>⏰ HORÁRIOS DISPONÍVEIS</label>
-            <select id="hora" required disabled>
-                <option value="">Selecione data e serviço primeiro</option>
-            </select>
+            <form id="agendamentoForm">
+                <label>🧑‍💼 PROFISSIONAL</label>
+                <select id="barbeiro">
+                    <option value="David">David</option>
+                </select>
 
-            <div class="loading" id="loading" style="display:none;">Carregando horários...</div>
+                <label>✂️ SERVIÇO OFERTADO</label>
+                <select id="servico" required>
+                    <option value="">Carregando...</option>
+                </select>
 
-            <button type="submit" id="btnAgendar" disabled>AGENDAR HORÁRIO ✅</button>
-        </form>
+                <label>📅 DATA DO AGENDAMENTO</label>
+                <input type="date" id="data" required>
+
+                <label>👤 SEU NOME</label>
+                <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+
+                <label>📱 SEU WHATSAPP</label>
+                <input type="tel" id="telefone" placeholder="Ex: 47999999999" required>
+
+                <label>⏰ HORÁRIOS DISPONÍVEIS</label>
+                <select id="hora" required disabled>
+                    <option value="">Selecione data e serviço primeiro</option>
+                </select>
+
+                <div class="loading" id="loading" style="display:none;">Carregando horários...</div>
+
+                <button type="submit" id="btnAgendar" disabled>AGENDAR HORÁRIO ✅</button>
+            </form>
+        </div>
     </div>
 
 <script>
@@ -134,13 +354,20 @@ let mapaServicos = {};
 const horariosManha = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30'];
 const horariosTarde = ['13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00'];
 
+// SPLASH SCREEN
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('splash').classList.add('hidden');
+    }, 2000);
+});
+
 function getHorariosPorDia(dataStr) {
     const data = new Date(dataStr + 'T12:00:00');
     const dia = data.getDay();
-    if (dia === 0) return []; // Domingo - vacío
-    if (dia === 6) return [...horariosManha.slice(0, 7),...horariosTarde.slice(0, 8)]; // Sábado: 08:00-11:30, 13:00-17:00
-    if (dia === 1) return [...horariosManha.slice(1, 7),...horariosTarde.slice(0, 9)]; // Segunda: 08:30-11:00, 13:00-17:30
-    return [...horariosManha.slice(1, 7),...horariosTarde.slice(0, 12)]; // Ter-Sex: 08:30-11:00, 13:00-19:00
+    if (dia === 0) return [];
+    if (dia === 6) return [...horariosManha.slice(0, 7),...horariosTarde.slice(0, 8)];
+    if (dia === 1) return [...horariosManha.slice(1, 7),...horariosTarde.slice(0, 9)];
+    return [...horariosManha.slice(1, 7),...horariosTarde.slice(0, 12)];
 }
 
 function esHoy(dataStr) {
@@ -156,6 +383,13 @@ function getHoraActual() {
     return `${h}:${m}`;
 }
 
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const dataInput = document.getElementById('data');
     const hoje = new Date();
@@ -165,7 +399,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     maxData.setDate(hoje.getDate() + 30);
     dataInput.max = maxData.toISOString().split('T')[0];
 
-    // Carrega serviços
     const res = await fetch(`${SCRIPT_URL}?action=getServicos`);
     mapaServicos = await res.json();
 
@@ -195,7 +428,6 @@ async function carregarHorarios() {
         return;
     }
 
-    // FIX: Domingo no habilitado
     const dataObj = new Date(data + 'T12:00:00');
     if (dataObj.getDay() === 0) {
         horaSelect.innerHTML = '<option value="">Domingo não trabalhamos</option>';
@@ -217,7 +449,6 @@ async function carregarHorarios() {
         const horaActual = getHoraActual();
         const esDiaHoy = esHoy(data);
 
-        // Marca ocupados por reservas existentes
         reservas.forEach(r => {
             const idx = todosHorarios.indexOf(r.hora);
             if (idx!== -1) {
@@ -248,20 +479,13 @@ async function carregarHorarios() {
                 return;
             }
 
-            // FIX DEFINITIVO: Solo bloquea si el siguiente slot existe, está en el MISMO TURNO y está ocupado
             if (bloquesNecesarios > 1) {
                 let noCabe = false;
                 for (let i = 1; i < bloquesNecesarios; i++) {
                     const siguienteSlot = todosHorarios[idx + i];
-
-                    // Si no existe el siguiente slot, deja agendar
                     if (!siguienteSlot) break;
-
-                    // FIX: Si salta del almuerzo (11:xx -> 13:xx), NO bloquea
                     const horaActual = todosHorarios[idx];
                     if (horaActual <= '11:30' && siguienteSlot >= '13:00') break;
-
-                    // Si existe y está ocupado, bloquea
                     if (horariosOcupados.has(siguienteSlot)) {
                         noCabe = true;
                         break;
@@ -277,7 +501,6 @@ async function carregarHorarios() {
             hayHorariosLibres = true;
         });
 
-        // Si no hay horarios libres
         if (!hayHorariosLibres) {
             horaSelect.innerHTML = '<option value="">Agenda cheia, escolha outro dia</option>';
             btn.disabled = true;
@@ -312,18 +535,17 @@ async function agendar(e) {
     try {
         const formData = new URLSearchParams(dados);
 
-        // WhatsApp instantáneo
         const msg = `*NOVA RESERVA - David Barber Studio*\n\n👤 Cliente: ${dados.cliente}\n📱 WhatsApp: ${dados.telefone}\n💈 Serviço: ${dados.servico}\n📅 Data: ${dados.data.split('-').reverse().join('/')}\n⏰ Hora: ${dados.hora}\n✂️ Barbeiro: ${dados.barbeiro}`;
         const whatsappUrl = `https://wa.me/5595991554792?text=${encodeURIComponent(msg)}`;
         window.open(whatsappUrl, '_blank');
 
-        // Envía al Sheets en background
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: formData
         });
 
-        // Limpia form rápido
+        showToast('Agendamento enviado! ✅');
+
         setTimeout(() => {
             document.getElementById('agendamentoForm').reset();
             document.getElementById('hora').innerHTML = '<option value="">Selecione data e serviço primeiro</option>';
@@ -333,7 +555,7 @@ async function agendar(e) {
         }, 500);
 
     } catch (error) {
-        alert('Erro de conexão');
+        showToast('Erro de conexão');
         btn.disabled = false;
         btn.textContent = 'AGENDAR HORÁRIO ✅';
     }
