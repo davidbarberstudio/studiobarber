@@ -31,6 +31,17 @@ select:focus, input:focus { outline: none; border: 1px solid #c5a059; box-shadow
 button { background: linear-gradient(90deg, #967433, #c5a059); color: #000; border: none; padding: 14px; font-size: 17px; font-weight: bold; border-radius: 12px; cursor: pointer; margin-top: 15px; width: 90%; text-transform: uppercase; letter-spacing: 1px; }
 button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 #confirmacao { display: none; margin-top: 15px; color: #fdf0cd; font-weight: bold; font-size: 15px; background: #110f0a; padding: 14px; border-radius: 10px; border: 1px solid #c5a059; }
+
+/* HORARIOS GRID */
+#horarios-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.horario-btn { padding: 12px 8px; background: #000; border: 1px solid #333; color: #c5a059; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: 0.2s; }
+.horario-btn:hover:not(.ocupado) { background: #1a1a1a; border-color: #c5a059; }
+.horario-btn.ocupado { background: #1a1a1a; color: #555; border-color: #222; cursor: not-allowed; text-decoration: line-through; }
+.horario-btn.selecionado { background: #c5a059; color: #000; border-color: #fdf0cd; box-shadow: 0 0 10px rgba(197, 160, 89, 0.5); }
+
+.msg { display: none; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 14px; }
+.msg.success { background: #0a2a0a; border: 1px solid #2d7a2d; color: #90ee90; }
+.msg.error { background: #2a0a0a; border: 1px solid #7a2d2d; color: #ff9090; }
 </style>
 </head>
 <body>
@@ -61,8 +72,8 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
     </div>
     <input type="hidden" id="barbeiro" value="David">
 
-    <label>✂️ Servicio Ofertado</label>
-    <select id="servico" onchange="triggerCargaHoras()">
+    <label>✂️ Serviço Ofertado</label>
+    <select id="servico" name="servico" onchange="triggerCargaHoras()">
       <option value="Corte">Corte Masculino — R$40</option>
       <option value="Barba">Barba — R$30</option>
       <option value="Corte e Barba">Corte e Barba — R$70</option>
@@ -70,20 +81,22 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
     </select>
 
     <label>📅 Data do Agendamento</label>
-    <input type="date" id="data" required onchange="triggerCargaHoras()">
+    <input type="date" id="data" name="data" required onchange="triggerCargaHoras()">
 
     <label>👤 Seu Nome</label>
-    <input type="text" id="cliente" placeholder="Digite seu nome completo" required>
+    <input type="text" id="cliente" name="cliente" placeholder="Digite seu nome completo" required>
 
     <label>📱 Seu WhatsApp</label>
-    <input type="tel" inputmode="numeric" id="telefone" placeholder="Ex: 47999999999" required>
+    <input type="tel" inputmode="numeric" id="telefone" name="telefone" placeholder="Ex: 47999999999" required>
 
     <label>⏰ Horários Disponíveis</label>
-    <select id="hora" required></select>
-    
+    <div id="horarios-container"></div>
+    <input type="hidden" id="hora" name="hora" required>
+
     <button type="button" id="btnAgendar" onclick="solicitarAgendamento()">Agendar Horário ✅</button>
   </form>
   <div id="confirmacao">Enviando agendamento para o sistema... por favor, aguarde. ⌛</div>
+  <div id="mensagem" class="msg"></div>
 </div>
 
 <script>
@@ -91,24 +104,35 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVpl
 
 let horariosBloqueados = [];
 
-// TELA "AGENDANDO" EM PORTUGUÊS
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('loader').style.display = 'none';
+        const hoje = new Date().toISOString().split('T')[0];
+        document.getElementById('data').value = hoje;
+        triggerCargaHoras();
+    }, 2500);
+});
+
+function seleccionarBarber(nombre, elemento) {
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    elemento.classList.add('active');
+    document.getElementById('barbeiro').value = nombre;
+    triggerCargaHoras();
+}
+
+function triggerCargaHoras() {
+    const data = document.getElementById('data').value;
+    if (data) carregarHorariosDisponiveis(data);
+}
+
 function mostrarAgendando() {
     const overlay = document.createElement('div');
     overlay.id = 'overlay-agendando';
     overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.92);
-        z-index: 99999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(8px);
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.92); z-index: 99999; display: flex;
+        align-items: center; justify-content: center; backdrop-filter: blur(8px);
     `;
-
     overlay.innerHTML = `
         <div style="text-align: center; color: white; padding: 30px; max-width: 400px;">
             <div style="width: 90px; height: 90px; border: 10px solid #222; border-top: 10px solid #c9a961; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 40px;"></div>
@@ -116,26 +140,17 @@ function mostrarAgendando() {
             <p style="font-size: 20px; margin-top: 15px; opacity: 0.9; font-weight: 300;">Por favor, aguarde</p>
             <p style="font-size: 14px; margin-top: 30px; opacity: 0.6;">Salvando seu horário no sistema</p>
         </div>
-        <style>
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style>
+        <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
     `;
     document.body.appendChild(overlay);
 }
 
-// TELA DE ERRO BONITA EM PORTUGUÊS
 function mostrarErro() {
     const overlay = document.getElementById('overlay-agendando');
     if (!overlay) return;
-
     overlay.innerHTML = `
         <div style="text-align: center; color: white; padding: 40px; max-width: 450px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 20px; border: 2px solid #c9a961; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
-            <div style="width: 80px; height: 80px; background: #ff4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; font-size: 50px;">
-                ✕
-            </div>
+            <div style="width: 80px; height: 80px; background: #ff4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; font-size: 50px;">✕</div>
             <h2 style="font-size: 32px; margin: 0 0 20px 0; font-family: 'Oswald', sans-serif; color: #ff4444;">OPS! ALGO DEU ERRADO</h2>
             <p style="font-size: 18px; line-height: 1.6; margin: 0 0 15px 0; opacity: 0.95;">
                 Seu agendamento <strong style="color: #c9a961;">NÃO foi realizado</strong>.
@@ -145,20 +160,12 @@ function mostrarErro() {
                 Por favor, <strong>recarregue a página</strong> e tente novamente.
             </p>
             <button onclick="location.reload()" style="
-                background: #c9a961;
-                color: #1a1a1a;
-                border: none;
-                padding: 15px 40px;
-                font-size: 18px;
-                font-weight: 700;
-                border-radius: 10px;
-                cursor: pointer;
-                font-family: 'Oswald', sans-serif;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                transition: all 0.3s;
-            " onmouseover="this.style.transform='scale(1.05)'; this.style.background='#d4b571';"
-               onmouseout="this.style.transform='scale(1)'; this.style.background='#c9a961';">
+                background: #c9a961; color: #1a1a1a; border: none; padding: 15px 40px;
+                font-size: 18px; font-weight: 700; border-radius: 10px; cursor: pointer;
+                font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px;
+                transition: all 0.3s;"
+                onmouseover="this.style.transform='scale(1.05)'; this.style.background='#d4b571';"
+                onmouseout="this.style.transform='scale(1)'; this.style.background='#c9a961';">
                 RECARREGAR PÁGINA
             </button>
         </div>
@@ -170,7 +177,6 @@ function ocultarAgendando() {
     if (overlay) overlay.remove();
 }
 
-// CARREGAR HORÁRIOS - BLOQUEIO DUPLO
 async function carregarHorariosDisponiveis(data) {
     const container = document.getElementById('horarios-container');
     container.innerHTML = '<p style="text-align:center;color:#888;">Carregando horários...</p>';
@@ -190,7 +196,6 @@ async function carregarHorariosDisponiveis(data) {
         horariosBloqueados.forEach(item => {
             const horaInicio = item.hora;
             const bloques = item.bloques || 1;
-
             for (let b = 0; b < bloques; b++) {
                 const horaBloqueada = sumarBloque(horaInicio, b);
                 horariosOcupados.add(horaBloqueada);
@@ -233,11 +238,17 @@ function selecionarHorario(hora) {
     document.getElementById('hora').value = hora;
 }
 
-// ENVIAR - COM TELA DE ERRO BONITA
-document.getElementById('formAgendamento').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const datos = Object.fromEntries(formData.entries());
+async function solicitarAgendamento() {
+    const form = document.getElementById('agendaForm');
+    const datos = {
+        barbeiro: document.getElementById('barbeiro').value,
+        servico: document.getElementById('servico').value,
+        data: document.getElementById('data').value,
+        cliente: document.getElementById('cliente').value,
+        telefone: document.getElementById('telefone').value,
+        hora: document.getElementById('hora').value
+    };
+
     const msg = document.getElementById('mensagem');
 
     if (!datos.hora) {
@@ -247,6 +258,14 @@ document.getElementById('formAgendamento').addEventListener('submit', async (e) 
         return;
     }
 
+    if (!datos.cliente ||!datos.telefone) {
+        msg.textContent = 'Preencha nome e WhatsApp';
+        msg.className = 'msg error';
+        msg.style.display = 'block';
+        return;
+    }
+
+    document.getElementById('btnAgendar').disabled = true;
     mostrarAgendando();
 
     try {
@@ -257,45 +276,26 @@ document.getElementById('formAgendamento').addEventListener('submit', async (e) 
         const resultado = await response.json();
 
         if (resultado.success) {
-            // SUCESSO - ESPERA E VAI PRO WHATSAPP
             setTimeout(() => {
                 ocultarAgendando();
-                msg.textContent = '✅ Agendamento confirmado!';
-                msg.className = 'msg success';
-                msg.style.display = 'block';
-
                 if (resultado.whatsapp) {
                     location.href = resultado.whatsapp;
                 }
-
-                document.getElementById('formAgendamento').reset();
-                carregarHorariosDisponiveis(datos.data);
             }, 1200);
         } else {
-            // ERRO - MOSTRA TELA BONITA DE ERRO
             setTimeout(() => {
                 mostrarErro();
             }, 800);
         }
 
     } catch (error) {
-        // ERRO DE CONEXÃO - MOSTRA TELA BONITA
         setTimeout(() => {
             mostrarErro();
         }, 800);
+    } finally {
+        document.getElementById('btnAgendar').disabled = false;
     }
-});
-
-// INICIAR
-document.getElementById('data').addEventListener('change', (e) => {
-    if (e.target.value) carregarHorariosDisponiveis(e.target.value);
-});
-
-window.onload = () => {
-    const hoje = new Date().toISOString().split('T')[0];
-    document.getElementById('data').value = hoje;
-    carregarHorariosDisponiveis(hoje);
-};
+}
 </script>
 </body>
 </html>
