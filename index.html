@@ -12,7 +12,7 @@
             color: #fff;
             padding: 20px;
         }
-   .container {
+ .container {
             max-width: 500px;
             margin: 0 auto;
             background: #111;
@@ -26,14 +26,14 @@
             font-size: 32px;
             margin-bottom: 5px;
         }
-   .subtitle {
+ .subtitle {
             text-align: center;
             color: #ccc;
             font-size: 14px;
             margin-bottom: 20px;
             letter-spacing: 2px;
         }
-   .horarios {
+ .horarios {
             text-align: center;
             color: #D4AF37;
             font-size: 12px;
@@ -77,7 +77,7 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-   .loading {
+ .loading {
             text-align: center;
             color: #D4AF37;
             margin-top: 10px;
@@ -238,12 +238,16 @@ async function carregarHorarios() {
                 return;
             }
 
-            // FIX: Solo bloquea "Não cabe" si el siguiente slot está ocupado
-            // Ya NO bloquea por cruzar almuerzo ni por llegar al final
+            // FIX: Solo bloquea "Não cabe" si el SIGUIENTE slot existe y está ocupado
+            // Ya NO bloquea 11:00 porque 11:30 no existe en turno mañana
             if (bloquesNecesarios > 1) {
                 let noCabe = false;
                 for (let i = 1; i < bloquesNecesarios; i++) {
-                    if (idx + i < todosHorarios.length && horariosOcupados.has(todosHorarios[idx + i])) {
+                    // Si el siguiente slot NO existe, permite agendar igual
+                    if (idx + i >= todosHorarios.length) break;
+
+                    // Si el siguiente slot está ocupado
+                    if (horariosOcupados.has(todosHorarios[idx + i])) {
                         noCabe = true;
                         break;
                     }
