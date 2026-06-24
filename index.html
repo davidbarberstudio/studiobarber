@@ -6,14 +6,94 @@
 <title>David Barber Studio</title>
 <style>
 body, html { margin: 0; padding: 0; background: #000; min-height: 100%; }
-#loader { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; transition: opacity 0.8s ease, visibility 0.8s ease; }
-#loader.hidden { opacity: 0; visibility: hidden; }
-#loader img { width: 360px; }
-.loader-bar { width: 200px; height: 6px; background: #333; margin-top: 20px; border-radius: 10px; overflow: hidden; }
-.loader-bar span { display: block; height: 100%; width: 0%; background: #D4AF37; animation: loading 2.5s forwards; }
+
+/* SPLASH - LOGO ANTES DE TODO */
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    transition: opacity 1s ease, visibility 1s ease;
+}
+#loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+#loader::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(197,160,89,0.2) 0%, transparent 70%);
+    animation: pulseGlow 3s ease-out;
+    pointer-events: none;
+}
+@keyframes pulseGlow {
+    0% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0; transform: scale(1.5); }
+}
+
+#loader img {
+    width: 380px;
+    animation: logoEntrada 3s ease-in-out;
+    filter: drop-shadow(0 0 40px rgba(197,160,89,0.8));
+}
+@keyframes logoEntrada {
+    0% { opacity: 0; transform: scale(0.7) translateY(30px); }
+    20% { opacity: 1; transform: scale(1) translateY(0); }
+    80% { opacity: 1; transform: scale(1) translateY(0); }
+    100% { opacity: 0; transform: scale(1.15) translateY(-30px); }
+}
+
+.loader-bar {
+    width: 220px;
+    height: 6px;
+    background: #222;
+    margin-top: 25px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(197,160,89,0.4);
+}
+.loader-bar span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #967433, #c5a059, #fdf0cd);
+    animation: loading 3s forwards;
+    box-shadow: 0 0 15px #D4AF37;
+}
 @keyframes loading { 0% { width: 0; } 100% { width: 100%; } }
-body { font-family: 'Segoe UI', Arial, sans-serif; color: #ddd; text-align: center; padding: 20px; animation: fadeIn 1s ease 2.5s backwards; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* BODY CON FADE DORADO */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #ddd;
+    text-align: center;
+    padding: 20px;
+    opacity: 0;
+    animation: fadeInBody 1.2s ease 3s forwards;
+}
+@keyframes fadeInBody {
+    from {
+        opacity: 0;
+        filter: blur(12px) brightness(0.4);
+    }
+    to {
+        opacity: 1;
+        filter: blur(0) brightness(1);
+    }
+}
+
 .db-header { font-family: 'Times New Roman', Georgia, serif; font-size: 54px; font-weight: bold; letter-spacing: 2px; line-height: 1; margin: 5px 0 2px 0; background: linear-gradient(135deg, #967433 0%, #fdf0cd 30%, #c5a059 70%, #ffffff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(197,160,89,0.5)); }
 .titulo { font-family: 'Times New Roman', Georgia, serif; font-size: 22px; font-weight: bold; letter-spacing: 4px; margin: 0 0 6px 0; background: linear-gradient(135deg, #c5a059 0%, #fdf0cd 50%, #c5a059 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .slogan { font-size: 10px; color: #ffffff; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 14px; opacity: 0.85; }
@@ -26,7 +106,20 @@ body { font-family: 'Segoe UI', Arial, sans-serif; color: #ddd; text-align: cent
 .card img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #c5a059; }
 .card span { display: block; margin-top: 6px; font-weight: bold; }
 .card.active { border: 2px solid #fdf0cd; box-shadow: 0 0 12px rgba(197, 160, 89, 0.6); }
-label { display: block; margin: 14px 0 6px; font-weight: bold; font-size: 13px; text-align: left; color: #8a8a8a; text-transform: uppercase; letter-spacing: 1px; }
+
+/* LABELS MÁS GRANDES Y VISIBLES */
+label {
+    display: block;
+    margin: 16px 0 8px;
+    font-weight: bold;
+    font-size: 15px;
+    text-align: left;
+    color: #c5a059;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 10px rgba(197, 160, 89, 0.3);
+}
+
 select, input { width: 90%; padding: 14px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #333; background: #000; color: #ffffff; font-size: 16px; box-sizing: border-box; }
 select:focus, input:focus { outline: none; border: 1px solid #c5a059; box-shadow: 0 0 8px rgba(197, 160, 89, 0.5); }
 select:disabled { opacity: 0.4; }
@@ -35,6 +128,19 @@ button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20p
 button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 #confirmacao { display: none; margin-top: 15px; color: #fdf0cd; font-weight: bold; font-size: 15px; background: #110f0a; padding: 14px; border-radius: 10px; border: 1px solid #c5a059; }
 .loading { text-align: center; color: #c5a059; margin-top: 10px; font-size: 14px; }
+
+/* MENSAJE DE ERROR */
+.erro-msg {
+    display: none;
+    background: #3a0f0f;
+    color: #ff6b6b;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    border: 1px solid #ff6b6b;
+    font-size: 14px;
+    font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -85,6 +191,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
     </select>
 
     <div class="loading" id="loading" style="display:none;">Carregando horários...</div>
+    <div class="erro-msg" id="erroMsg">Preencha todos os campos</div>
 
     <button type="button" id="btnAgendar" onclick="solicitarAgendamento()" disabled>Agendar Horário ✅</button>
   </form>
@@ -98,11 +205,11 @@ let mapaServicos = {};
 const horariosManha = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30'];
 const horariosTarde = ['13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00'];
 
-// SPLASH SCREEN
+// SPLASH 3 SEGUNDOS PARA QUE SE VEA BIEN EL LOGO
 window.addEventListener('load', () => {
     setTimeout(() => {
         document.getElementById('loader').classList.add('hidden');
-    }, 2500);
+    }, 3000);
 });
 
 function seleccionarBarber(nombre, element) {
@@ -146,10 +253,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const res = await fetch(`${SCRIPT_URL}?action=getServicos`);
     mapaServicos = await res.json();
 
+    // SERVICIOS CON PRECIOS
+    const precos = {
+        'Corte Masculino': 'R$40',
+        'Barba': 'R$30',
+        'Corte e Barba': 'R$70',
+        'Sobrancelha': 'R$10'
+    };
+
     const servicoSelect = document.getElementById('servico');
     servicoSelect.innerHTML = '<option value="">Selecione um serviço</option>';
     Object.keys(mapaServicos).forEach(servico => {
-        servicoSelect.innerHTML += `<option value="${servico}">${servico}</option>`;
+        const preco = precos[servico] || '';
+        servicoSelect.innerHTML += `<option value="${servico}">${servico} — ${preco}</option>`;
     });
 
     document.getElementById('data').addEventListener('change', triggerCargaHoras);
@@ -267,17 +383,32 @@ async function carregarHorarios() {
 async function solicitarAgendamento() {
     const btn = document.getElementById('btnAgendar');
     const confirmDiv = document.getElementById('confirmacao');
+    const erroMsg = document.getElementById('erroMsg');
 
+    // VALIDACIÓN - SI FALTA ALGO NO ENVÍA
+    const data = document.getElementById('data').value;
+    const hora = document.getElementById('hora').value;
+    const cliente = document.getElementById('cliente').value;
+    const telefone = document.getElementById('telefone').value;
+    const servico = document.getElementById('servico').value;
+
+    if (!data ||!hora ||!cliente ||!telefone ||!servico) {
+        erroMsg.style.display = 'block';
+        setTimeout(() => erroMsg.style.display = 'none', 3000);
+        return;
+    }
+
+    erroMsg.style.display = 'none';
     btn.disabled = true;
     btn.textContent = 'AGENDANDO...';
     confirmDiv.style.display = 'block';
 
     const dados = {
-        data: document.getElementById('data').value,
-        hora: document.getElementById('hora').value,
-        cliente: document.getElementById('cliente').value,
-        telefone: document.getElementById('telefone').value,
-        servico: document.getElementById('servico').value,
+        data: data,
+        hora: hora,
+        cliente: cliente,
+        telefone: telefone,
+        servico: servico,
         barbeiro: document.getElementById('barbeiro').value
     };
 
@@ -310,4 +441,4 @@ async function solicitarAgendamento() {
 }
 </script>
 </body>
-</html>
+  </html>
