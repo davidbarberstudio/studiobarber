@@ -7,54 +7,31 @@
 <style>
 body, html { margin: 0; padding: 0; background: #000; min-height: 100%; }
 
-/* SPLASH - LOGO ANTES DE TODO */
+/* SPLASH CORRIGIDO - 2 SEGUNDOS */
 #loader {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+    background: #000;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 99999;
-    transition: opacity 1s ease, visibility 1s ease;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 #loader.hidden {
     opacity: 0;
     visibility: hidden;
-}
-#loader::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(197,160,89,0.2) 0%, transparent 70%);
-    animation: pulseGlow 3s ease-out;
     pointer-events: none;
 }
-@keyframes pulseGlow {
-    0% { opacity: 0; transform: scale(0.8); }
-    50% { opacity: 1; transform: scale(1.2); }
-    100% { opacity: 0; transform: scale(1.5); }
-}
-
 #loader img {
-    width: 380px;
-    animation: logoEntrada 3s ease-in-out;
-    filter: drop-shadow(0 0 40px rgba(197,160,89,0.8));
+    width: 340px;
+    max-width: 80%;
+    filter: drop-shadow(0 0 30px rgba(197,160,89,0.8));
 }
-@keyframes logoEntrada {
-    0% { opacity: 0; transform: scale(0.7) translateY(30px); }
-    20% { opacity: 1; transform: scale(1) translateY(0); }
-    80% { opacity: 1; transform: scale(1) translateY(0); }
-    100% { opacity: 0; transform: scale(1.15) translateY(-30px); }
-}
-
 .loader-bar {
     width: 220px;
     height: 6px;
@@ -69,29 +46,17 @@ body, html { margin: 0; padding: 0; background: #000; min-height: 100%; }
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, #967433, #c5a059, #fdf0cd);
-    animation: loading 3s forwards;
+    animation: loading 2s forwards;
     box-shadow: 0 0 15px #D4AF37;
 }
 @keyframes loading { 0% { width: 0; } 100% { width: 100%; } }
 
-/* BODY CON FADE DORADO */
+/* BODY */
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     color: #ddd;
     text-align: center;
     padding: 20px;
-    opacity: 0;
-    animation: fadeInBody 1.2s ease 3s forwards;
-}
-@keyframes fadeInBody {
-    from {
-        opacity: 0;
-        filter: blur(12px) brightness(0.4);
-    }
-    to {
-        opacity: 1;
-        filter: blur(0) brightness(1);
-    }
 }
 
 .db-header { font-family: 'Times New Roman', Georgia, serif; font-size: 54px; font-weight: bold; letter-spacing: 2px; line-height: 1; margin: 5px 0 2px 0; background: linear-gradient(135deg, #967433 0%, #fdf0cd 30%, #c5a059 70%, #ffffff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(197,160,89,0.5)); }
@@ -107,7 +72,7 @@ body {
 .card span { display: block; margin-top: 6px; font-weight: bold; }
 .card.active { border: 2px solid #fdf0cd; box-shadow: 0 0 12px rgba(197, 160, 89, 0.6); }
 
-/* LABELS MÁS GRANDES Y VISIBLES */
+/* LABELS GRANDES Y DORADOS COMO TE GUSTARON */
 label {
     display: block;
     margin: 16px 0 8px;
@@ -129,7 +94,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 #confirmacao { display: none; margin-top: 15px; color: #fdf0cd; font-weight: bold; font-size: 15px; background: #110f0a; padding: 14px; border-radius: 10px; border: 1px solid #c5a059; }
 .loading { text-align: center; color: #c5a059; margin-top: 10px; font-size: 14px; }
 
-/* MENSAJE DE ERROR */
+/* MENSAJE ERROR */
 .erro-msg {
     display: none;
     background: #3a0f0f;
@@ -205,11 +170,11 @@ let mapaServicos = {};
 const horariosManha = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30'];
 const horariosTarde = ['13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00'];
 
-// SPLASH 3 SEGUNDOS PARA QUE SE VEA BIEN EL LOGO
+// SPLASH 2 SEGUNDOS
 window.addEventListener('load', () => {
     setTimeout(() => {
         document.getElementById('loader').classList.add('hidden');
-    }, 3000);
+    }, 2000);
 });
 
 function seleccionarBarber(nombre, element) {
@@ -253,7 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const res = await fetch(`${SCRIPT_URL}?action=getServicos`);
     mapaServicos = await res.json();
 
-    // SERVICIOS CON PRECIOS
+    // PRECIOS CORREGIDOS
     const precos = {
         'Corte Masculino': 'R$40',
         'Barba': 'R$30',
@@ -419,6 +384,7 @@ async function solicitarAgendamento() {
         const whatsappUrl = `https://wa.me/5595991554792?text=${encodeURIComponent(msg)}`;
         window.open(whatsappUrl, '_blank');
 
+        // NO CAMBIO NADA - SIGUE ENVIANDO RÁPIDO AL SHEETS
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: formData
@@ -441,4 +407,4 @@ async function solicitarAgendamento() {
 }
 </script>
 </body>
-  </html>
+</html>
