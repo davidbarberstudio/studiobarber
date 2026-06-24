@@ -12,7 +12,7 @@
             color: #fff;
             padding: 20px;
         }
- .container {
+.container {
             max-width: 500px;
             margin: 0 auto;
             background: #111;
@@ -26,14 +26,14 @@
             font-size: 32px;
             margin-bottom: 5px;
         }
- .subtitle {
+.subtitle {
             text-align: center;
             color: #ccc;
             font-size: 14px;
             margin-bottom: 20px;
             letter-spacing: 2px;
         }
- .horarios {
+.horarios {
             text-align: center;
             color: #D4AF37;
             font-size: 12px;
@@ -77,7 +77,7 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
- .loading {
+.loading {
             text-align: center;
             color: #D4AF37;
             margin-top: 10px;
@@ -137,7 +137,7 @@ const horariosTarde = ['13:00','13:30','14:00','14:30','15:00','15:30','16:00','
 function getHorariosPorDia(dataStr) {
     const data = new Date(dataStr + 'T12:00:00');
     const dia = data.getDay();
-    if (dia === 0) return []; // Domingo
+    if (dia === 0) return []; // Domingo - vacío
     if (dia === 6) return [...horariosManha.slice(0, 7),...horariosTarde.slice(0, 8)]; // Sábado: 08:00-11:30, 13:00-17:00
     if (dia === 1) return [...horariosManha.slice(1, 7),...horariosTarde.slice(0, 9)]; // Segunda: 08:30-11:00, 13:00-17:30
     return [...horariosManha.slice(1, 7),...horariosTarde.slice(0, 12)]; // Ter-Sex: 08:30-11:00, 13:00-19:00
@@ -195,6 +195,16 @@ async function carregarHorarios() {
         return;
     }
 
+    // FIX: Domingo no habilitado
+    const dataObj = new Date(data + 'T12:00:00');
+    if (dataObj.getDay() === 0) {
+        horaSelect.innerHTML = '<option value="">Domingo não trabalhamos</option>';
+        horaSelect.disabled = true;
+        btn.disabled = true;
+        loading.style.display = 'none';
+        return;
+    }
+
     loading.style.display = 'block';
     horaSelect.disabled = true;
 
@@ -222,6 +232,7 @@ async function carregarHorarios() {
         const bloquesNecesarios = mapaServicos[servico] || 1;
 
         horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
+        let hayHorariosLibres = false;
 
         todosHorarios.forEach((hora, idx) => {
             const ocupado = horariosOcupados.has(hora);
@@ -237,15 +248,20 @@ async function carregarHorarios() {
                 return;
             }
 
-            // FIX FINAL: Solo bloquea si el siguiente slot existe Y está ocupado
-            // Si es 11:00 y 11:30 no existe en ese día, deja agendar igual
+            // FIX DEFINITIVO: Solo bloquea si el siguiente slot existe, está en el MISMO TURNO y está ocupado
             if (bloquesNecesarios > 1) {
                 let noCabe = false;
                 for (let i = 1; i < bloquesNecesarios; i++) {
                     const siguienteSlot = todosHorarios[idx + i];
-                    // Si el siguiente slot no existe, NO bloquea
+
+                    // Si no existe el siguiente slot, deja agendar
                     if (!siguienteSlot) break;
-                    // Si existe pero está ocupado, bloquea
+
+                    // FIX: Si salta del almuerzo (11:xx -> 13:xx), NO bloquea
+                    const horaActual = todosHorarios[idx];
+                    if (horaActual <= '11:30' && siguienteSlot >= '13:00') break;
+
+                    // Si existe y está ocupado, bloquea
                     if (horariosOcupados.has(siguienteSlot)) {
                         noCabe = true;
                         break;
@@ -258,10 +274,18 @@ async function carregarHorarios() {
             }
 
             horaSelect.innerHTML += `<option value="${hora}">${hora}</option>`;
+            hayHorariosLibres = true;
         });
 
-        horaSelect.disabled = false;
-        btn.disabled = false;
+        // Si no hay horarios libres
+        if (!hayHorariosLibres) {
+            horaSelect.innerHTML = '<option value="">Agenda cheia, escolha outro dia</option>';
+            btn.disabled = true;
+        } else {
+            horaSelect.disabled = false;
+            btn.disabled = false;
+        }
+
     } catch (error) {
         horaSelect.innerHTML = '<option value="">Erro ao carregar</option>';
         console.error(error);
