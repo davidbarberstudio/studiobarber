@@ -12,7 +12,7 @@
             color: #fff;
             padding: 20px;
         }
-      .container {
+   .container {
             max-width: 500px;
             margin: 0 auto;
             background: #111;
@@ -26,14 +26,14 @@
             font-size: 32px;
             margin-bottom: 5px;
         }
-      .subtitle {
+   .subtitle {
             text-align: center;
             color: #ccc;
             font-size: 14px;
             margin-bottom: 20px;
             letter-spacing: 2px;
         }
-      .horarios {
+   .horarios {
             text-align: center;
             color: #D4AF37;
             font-size: 12px;
@@ -77,7 +77,7 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-      .loading {
+   .loading {
             text-align: center;
             color: #D4AF37;
             margin-top: 10px;
@@ -92,7 +92,7 @@
 
         <div class="horarios">
             🕐 Segunda: 08:30-11:00, 13:00-17:30<br>
-            🕐 Terça a Sexta: 08:30-11:00, 13:00-18:00<br>
+            🕐 Terça a Sexta: 08:30-11:00, 13:00-19:00<br>
             🕐 Sábado: 08:00-11:30, 13:00-17:00
         </div>
 
@@ -131,16 +131,17 @@
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHurr-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec';
 let mapaServicos = {};
 
+// FIX: Horarios completos hasta 19:00
 const horariosManha = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30'];
-const horariosTarde = ['13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00'];
+const horariosTarde = ['13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00'];
 
 function getHorariosPorDia(dataStr) {
     const data = new Date(dataStr + 'T12:00:00');
     const dia = data.getDay();
     if (dia === 0) return []; // Domingo
     if (dia === 6) return [...horariosManha.slice(0, 7),...horariosTarde.slice(0, 8)]; // Sábado: 08:00-11:30, 13:00-17:00
-    if (dia === 1) return [...horariosManha.slice(1, 6),...horariosTarde.slice(0, 9)]; // Segunda: 08:30-11:00, 13:00-17:30
-    return [...horariosManha.slice(1, 6),...horariosTarde.slice(0, 10)]; // Ter-Sex: 08:30-11:00, 13:00-18:00
+    if (dia === 1) return [...horariosManha.slice(1, 7),...horariosTarde.slice(0, 9)]; // Segunda: 08:30-11:00, 13:00-17:30
+    return [...horariosManha.slice(1, 7),...horariosTarde.slice(0, 12)]; // Ter-Sex: 08:30-11:00, 13:00-19:00
 }
 
 function esHoy(dataStr) {
@@ -237,31 +238,18 @@ async function carregarHorarios() {
                 return;
             }
 
-            // PATCH: Solo muestra "Não cabe" si hay una cita en el siguiente bloque
+            // FIX: Solo bloquea "Não cabe" si el siguiente slot está ocupado
+            // Ya NO bloquea por cruzar almuerzo ni por llegar al final
             if (bloquesNecesarios > 1) {
                 let noCabe = false;
-                let motivo = '';
-
                 for (let i = 1; i < bloquesNecesarios; i++) {
-                    // Si se pasa del horario, igual deja agendar
-                    if (idx + i >= todosHorarios.length) break;
-
-                    // Si el siguiente slot está ocupado
-                    if (horariosOcupados.has(todosHorarios[idx + i])) {
+                    if (idx + i < todosHorarios.length && horariosOcupados.has(todosHorarios[idx + i])) {
                         noCabe = true;
-                        motivo = 'Não cabe';
-                        break;
-                    }
-                    // Si cruza almuerzo
-                    if (todosHorarios[idx] <= '11:30' && todosHorarios[idx + i] >= '13:00') {
-                        noCabe = true;
-                        motivo = 'Cruza almoço';
                         break;
                     }
                 }
-
                 if (noCabe) {
-                    horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - ${motivo}</option>`;
+                    horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Não cabe</option>`;
                     return;
                 }
             }
