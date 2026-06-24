@@ -12,7 +12,7 @@
             color: #fff;
             padding: 20px;
         }
-     .container {
+      .container {
             max-width: 500px;
             margin: 0 auto;
             background: #111;
@@ -26,14 +26,14 @@
             font-size: 32px;
             margin-bottom: 5px;
         }
-     .subtitle {
+      .subtitle {
             text-align: center;
             color: #ccc;
             font-size: 14px;
             margin-bottom: 20px;
             letter-spacing: 2px;
         }
-     .horarios {
+      .horarios {
             text-align: center;
             color: #D4AF37;
             font-size: 12px;
@@ -77,7 +77,7 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-     .loading {
+      .loading {
             text-align: center;
             color: #D4AF37;
             margin-top: 10px;
@@ -143,6 +143,19 @@ function getHorariosPorDia(dataStr) {
     return [...horariosManha.slice(1, 6),...horariosTarde.slice(0, 10)]; // Ter-Sex: 08:30-11:00, 13:00-18:00
 }
 
+function esHoy(dataStr) {
+    const hoy = new Date();
+    const dataSel = new Date(dataStr + 'T12:00:00');
+    return hoy.toDateString() === dataSel.toDateString();
+}
+
+function getHoraActual() {
+    const ahora = new Date();
+    const h = String(ahora.getHours()).padStart(2, '0');
+    const m = String(ahora.getMinutes()).padStart(2, '0');
+    return `${h}:${m}`;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const dataInput = document.getElementById('data');
     const hoje = new Date();
@@ -191,6 +204,8 @@ async function carregarHorarios() {
 
         const todosHorarios = getHorariosPorDia(data);
         const horariosOcupados = new Set();
+        const horaActual = getHoraActual();
+        const esDiaHoy = esHoy(data);
 
         // Marca ocupados por reservas existentes
         reservas.forEach(r => {
@@ -204,14 +219,54 @@ async function carregarHorarios() {
             }
         });
 
+        const bloquesNecesarios = mapaServicos[servico] || 1;
+
         horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
 
-        todosHorarios.forEach((hora) => {
-            if (horariosOcupados.has(hora)) {
-                horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Ocupado</option>`;
-            } else {
-                horaSelect.innerHTML += `<option value="${hora}">${hora}</option>`;
+        todosHorarios.forEach((hora, idx) => {
+            const ocupado = horariosOcupados.has(hora);
+            const pasado = esDiaHoy && hora < horaActual;
+
+            if (pasado) {
+                horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Passado</option>`;
+                return;
             }
+
+            if (ocupado) {
+                horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Ocupado</option>`;
+                return;
+            }
+
+            // PATCH: Solo muestra "Não cabe" si hay una cita en el siguiente bloque
+            if (bloquesNecesarios > 1) {
+                let noCabe = false;
+                let motivo = '';
+
+                for (let i = 1; i < bloquesNecesarios; i++) {
+                    // Si se pasa del horario, igual deja agendar
+                    if (idx + i >= todosHorarios.length) break;
+
+                    // Si el siguiente slot está ocupado
+                    if (horariosOcupados.has(todosHorarios[idx + i])) {
+                        noCabe = true;
+                        motivo = 'Não cabe';
+                        break;
+                    }
+                    // Si cruza almuerzo
+                    if (todosHorarios[idx] <= '11:30' && todosHorarios[idx + i] >= '13:00') {
+                        noCabe = true;
+                        motivo = 'Cruza almoço';
+                        break;
+                    }
+                }
+
+                if (noCabe) {
+                    horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - ${motivo}</option>`;
+                    return;
+                }
+            }
+
+            horaSelect.innerHTML += `<option value="${hora}">${hora}</option>`;
         });
 
         horaSelect.disabled = false;
