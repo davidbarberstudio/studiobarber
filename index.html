@@ -12,7 +12,7 @@
             color: #fff;
             padding: 20px;
         }
-      .container {
+     .container {
             max-width: 500px;
             margin: 0 auto;
             background: #111;
@@ -26,14 +26,14 @@
             font-size: 32px;
             margin-bottom: 5px;
         }
-      .subtitle {
+     .subtitle {
             text-align: center;
             color: #ccc;
             font-size: 14px;
             margin-bottom: 20px;
             letter-spacing: 2px;
         }
-      .horarios {
+     .horarios {
             text-align: center;
             color: #D4AF37;
             font-size: 12px;
@@ -77,7 +77,7 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-      .loading {
+     .loading {
             text-align: center;
             color: #D4AF37;
             margin-top: 10px;
@@ -204,42 +204,11 @@ async function carregarHorarios() {
             }
         });
 
-        // Calcula cuantos bloques necesita el servicio actual
-        const bloquesNecesarios = mapaServicos[servico] || 1;
-
         horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
 
-        todosHorarios.forEach((hora, idx) => {
-            const ocupado = horariosOcupados.has(hora);
-
-            // FIX: Verifica si el servicio cabe completo HACIA ADELANTE
-            let cabeCompleto = true;
-            let cruzaAlmuerzo = false;
-
-            for (let i = 0; i < bloquesNecesarios; i++) {
-                // Si se pasa del último horario disponible
-                if (idx + i >= todosHorarios.length) {
-                    cabeCompleto = false;
-                    break;
-                }
-                // Si cruza el almuerzo: 11:30 -> 13:00
-                if (todosHorarios[idx] <= '11:30' && todosHorarios[idx + i] >= '13:00') {
-                    cruzaAlmuerzo = true;
-                    cabeCompleto = false;
-                    break;
-                }
-                // Si alguno de los bloques siguientes ya está ocupado
-                if (horariosOcupados.has(todosHorarios[idx + i])) {
-                    cabeCompleto = false;
-                    break;
-                }
-            }
-
-            if (ocupado) {
+        todosHorarios.forEach((hora) => {
+            if (horariosOcupados.has(hora)) {
                 horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Ocupado</option>`;
-            } else if (!cabeCompleto) {
-                const motivo = cruzaAlmuerzo? 'Cruza almoço' : 'Não cabe';
-                horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - ${motivo}</option>`;
             } else {
                 horaSelect.innerHTML += `<option value="${hora}">${hora}</option>`;
             }
@@ -273,7 +242,7 @@ async function agendar(e) {
     try {
         const formData = new URLSearchParams(dados);
 
-        // Redirección instantánea a WhatsApp - abre en nueva pestaña
+        // WhatsApp instantáneo
         const msg = `*NOVA RESERVA - David Barber Studio*\n\n👤 Cliente: ${dados.cliente}\n📱 WhatsApp: ${dados.telefone}\n💈 Serviço: ${dados.servico}\n📅 Data: ${dados.data.split('-').reverse().join('/')}\n⏰ Hora: ${dados.hora}\n✂️ Barbeiro: ${dados.barbeiro}`;
         const whatsappUrl = `https://wa.me/5595991554792?text=${encodeURIComponent(msg)}`;
         window.open(whatsappUrl, '_blank');
