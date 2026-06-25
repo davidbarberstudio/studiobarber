@@ -15,7 +15,6 @@ body, html { margin: 0; padding: 0; background: #000; min-height: 100%; }
 .loader-bar span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, #967433, #c5a059, #fdf0cd); animation: loading 2s forwards; box-shadow: 0 0 15px #D4AF37; }
 @keyframes loading { 0% { width: 0; } 100% { width: 100%; } }
 
-/* MODAL DE ERROR CENTRADO */
 .modal-erro {
     display: none;
     position: fixed;
@@ -75,11 +74,10 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 <body>
 
 <div id="loader">
-  <img src="https://i.ibb.co/7JHVzJj/logo-david-barber-optimized.webp" alt="Logo" loading="eager">
+  <img src="https://i.ibb.co/Mk0cWNvk/1781700650976.png" alt="Logo" loading="eager">
   <div class="loader-bar"><span></span></div>
 </div>
 
-<!-- MODAL ERROR -->
 <div class="modal-erro" id="modalErro" onclick="fecharModal()">
   <div class="modal-box">
     <div class="emoji">⚠️</div>
@@ -347,7 +345,7 @@ async function solicitarAgendamento() {
         const whatsappUrl = `https://wa.me/5595991554792?text=${encodeURIComponent(msg)}`;
         window.open(whatsappUrl, '_blank');
 
-        fetch(SCRIPT_URL, { method: 'POST', body: formData });
+        fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' });
 
         setTimeout(() => {
             confirmDiv.style.display = 'none';
