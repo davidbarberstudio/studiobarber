@@ -2,46 +2,63 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>David Barber Studio</title>
 <style>
-*{ -webkit-tap-highlight-color: transparent; }
 body, html { margin: 0; padding: 0; background: #000; min-height: 100%; }
-#loader { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; transition: opacity 0.5s ease, visibility 0.5s ease; }
-#loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-#loader img { width: 340px; max-width: 80%; filter: drop-shadow(0 0 30px rgba(197,160,89,0.8)); }
-.loader-bar { width: 220px; height: 6px; background: #222; margin-top: 25px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(197,160,89,0.4); }
-.loader-bar span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, #967433, #c5a059, #fdf0cd); animation: loading 2s forwards; box-shadow: 0 0 15px #D4AF37; }
-@keyframes loading { 0% { width: 0; } 100% { width: 100%; } }
 
-/* MODAL ERROR GRANDE - NUEVO */
-.modal-erro {
-    display: none;
+/* SPLASH CORRIGIDO - 2 SEGUNDOS */
+#loader {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,0.9);
-    z-index: 9999;
+    background: #000;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    z-index: 99999;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
-.modal-erro.active { display: flex; }
-.modal-box {
-    background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
-    border: 2px solid #c5a059;
-    border-radius: 20px;
-    padding: 40px 30px;
-    max-width: 85%;
-    text-align: center;
-    box-shadow: 0 0 40px rgba(197, 160, 89, 0.5);
+#loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
-.modal-box.emoji { font-size: 60px; margin-bottom: 15px; }
-.modal-box.titulo-erro { font-size: 24px; font-weight: bold; color: #fdf0cd; margin-bottom: 10px; text-shadow: 0 0 15px rgba(197, 160, 89, 0.6); }
-.modal-box.subtitulo-erro { font-size: 15px; color: #c5a059; opacity: 0.9; }
+#loader img {
+    width: 340px;
+    max-width: 80%;
+    filter: drop-shadow(0 0 30px rgba(197,160,89,0.8));
+}
+.loader-bar {
+    width: 220px;
+    height: 6px;
+    background: #222;
+    margin-top: 25px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(197,160,89,0.4);
+}
+.loader-bar span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #967433, #c5a059, #fdf0cd);
+    animation: loading 2s forwards;
+    box-shadow: 0 0 15px #D4AF37;
+}
+@keyframes loading { 0% { width: 0; } 100% { width: 100%; } }
 
-body { font-family: 'Segoe UI', Arial, sans-serif; color: #ddd; text-align: center; padding: 20px; }
+/* BODY */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #ddd;
+    text-align: center;
+    padding: 20px;
+}
+
 .db-header { font-family: 'Times New Roman', Georgia, serif; font-size: 54px; font-weight: bold; letter-spacing: 2px; line-height: 1; margin: 5px 0 2px 0; background: linear-gradient(135deg, #967433 0%, #fdf0cd 30%, #c5a059 70%, #ffffff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 8px rgba(197,160,89,0.5)); }
 .titulo { font-family: 'Times New Roman', Georgia, serif; font-size: 22px; font-weight: bold; letter-spacing: 4px; margin: 0 0 6px 0; background: linear-gradient(135deg, #c5a059 0%, #fdf0cd 50%, #c5a059 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .slogan { font-size: 10px; color: #ffffff; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 14px; opacity: 0.85; }
@@ -54,7 +71,20 @@ body { font-family: 'Segoe UI', Arial, sans-serif; color: #ddd; text-align: cent
 .card img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #c5a059; }
 .card span { display: block; margin-top: 6px; font-weight: bold; }
 .card.active { border: 2px solid #fdf0cd; box-shadow: 0 0 12px rgba(197, 160, 89, 0.6); }
-label { display: block; margin: 16px 0 8px; font-weight: bold; font-size: 15px; text-align: left; color: #c5a059; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 10px rgba(197, 160, 89, 0.3); }
+
+/* LABELS GRANDES Y DORADOS COMO TE GUSTARON */
+label {
+    display: block;
+    margin: 16px 0 8px;
+    font-weight: bold;
+    font-size: 15px;
+    text-align: left;
+    color: #c5a059;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 10px rgba(197, 160, 89, 0.3);
+}
+
 select, input { width: 90%; padding: 14px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #333; background: #000; color: #ffffff; font-size: 16px; box-sizing: border-box; }
 select:focus, input:focus { outline: none; border: 1px solid #c5a059; box-shadow: 0 0 8px rgba(197, 160, 89, 0.5); }
 select:disabled { opacity: 0.4; }
@@ -63,6 +93,19 @@ button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20p
 button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 #confirmacao { display: none; margin-top: 15px; color: #fdf0cd; font-weight: bold; font-size: 15px; background: #110f0a; padding: 14px; border-radius: 10px; border: 1px solid #c5a059; }
 .loading { text-align: center; color: #c5a059; margin-top: 10px; font-size: 14px; }
+
+/* MENSAJE ERROR */
+.erro-msg {
+    display: none;
+    background: #3a0f0f;
+    color: #ff6b6b;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    border: 1px solid #ff6b6b;
+    font-size: 14px;
+    font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -70,15 +113,6 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 <div id="loader">
   <img src="https://i.ibb.co/Mk0cWNvk/1781700650976.png" alt="Logo">
   <div class="loader-bar"><span></span></div>
-</div>
-
-<!-- MODAL ERROR GRANDE - NUEVO -->
-<div class="modal-erro" id="modalErro" onclick="fecharModal()">
-  <div class="modal-box">
-    <div class="emoji">⚠️</div>
-    <div class="titulo-erro">Preencha todos os campos</div>
-    <div class="subtitulo-erro">Toque para continuar</div>
-  </div>
 </div>
 
 <div class="db-header">DB</div>
@@ -99,6 +133,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
         <img src="https://i.ibb.co/B5GDCLGN/IMG-20241012-152952-2.jpg" alt="David">
         <span>David</span>
       </div>
+    </div>
     <input type="hidden" id="barbeiro" value="David">
 
     <label>✂️ Serviço Ofertado</label>
@@ -121,6 +156,7 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
     </select>
 
     <div class="loading" id="loading" style="display:none;">Carregando horários...</div>
+    <div class="erro-msg" id="erroMsg">Preencha todos os campos</div>
 
     <button type="button" id="btnAgendar" onclick="solicitarAgendamento()" disabled>Agendar Horário ✅</button>
   </form>
@@ -134,19 +170,12 @@ let mapaServicos = {};
 const horariosManha = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30'];
 const horariosTarde = ['13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00'];
 
+// SPLASH 2 SEGUNDOS
 window.addEventListener('load', () => {
     setTimeout(() => {
         document.getElementById('loader').classList.add('hidden');
     }, 2000);
 });
-
-function fecharModal() {
-    document.getElementById('modalErro').classList.remove('active');
-}
-
-function mostrarModalErro() {
-    document.getElementById('modalErro').classList.add('active');
-}
 
 function seleccionarBarber(nombre, element) {
     document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
@@ -181,6 +210,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const dataInput = document.getElementById('data');
     const hoje = new Date();
     dataInput.min = hoje.toISOString().split('T')[0];
+
     const maxData = new Date();
     maxData.setDate(hoje.getDate() + 30);
     dataInput.max = maxData.toISOString().split('T')[0];
@@ -188,10 +218,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const res = await fetch(`${SCRIPT_URL}?action=getServicos`);
     mapaServicos = await res.json();
 
+    // PRECIOS CORREGIDOS
+    const precos = {
+        'Corte Masculino': 'R$40',
+        'Barba': 'R$30',
+        'Corte e Barba': 'R$70',
+        'Sobrancelha': 'R$10'
+    };
+
     const servicoSelect = document.getElementById('servico');
     servicoSelect.innerHTML = '<option value="">Selecione um serviço</option>';
     Object.keys(mapaServicos).forEach(servico => {
-        const preco = mapaServicos[servico].preco || ''; // ARREGLO 1: LEE PRECIO DEL SHEETS
+        const preco = precos[servico] || '';
         servicoSelect.innerHTML += `<option value="${servico}">${servico} — ${preco}</option>`;
     });
 
@@ -250,7 +288,8 @@ async function carregarHorarios() {
             }
         });
 
-        const bloquesNecesarios = mapaServicos[servico].blocos || 1; // ARREGLO 2: LEE DURACIÓN DEL SHEETS
+        const bloquesNecesarios = mapaServicos[servico] || 1;
+
         horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
         let hayHorariosLibres = false;
 
@@ -262,6 +301,7 @@ async function carregarHorarios() {
                 horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Passado</option>`;
                 return;
             }
+
             if (ocupado) {
                 horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Ocupado</option>`;
                 return;
@@ -308,7 +348,9 @@ async function carregarHorarios() {
 async function solicitarAgendamento() {
     const btn = document.getElementById('btnAgendar');
     const confirmDiv = document.getElementById('confirmacao');
+    const erroMsg = document.getElementById('erroMsg');
 
+    // VALIDACIÓN - SI FALTA ALGO NO ENVÍA
     const data = document.getElementById('data').value;
     const hora = document.getElementById('hora').value;
     const cliente = document.getElementById('cliente').value;
@@ -316,10 +358,12 @@ async function solicitarAgendamento() {
     const servico = document.getElementById('servico').value;
 
     if (!data ||!hora ||!cliente ||!telefone ||!servico) {
-        mostrarModalErro(); // ARREGLO 3: MODAL GRANDE
+        erroMsg.style.display = 'block';
+        setTimeout(() => erroMsg.style.display = 'none', 3000);
         return;
     }
 
+    erroMsg.style.display = 'none';
     btn.disabled = true;
     btn.textContent = 'AGENDANDO...';
     confirmDiv.style.display = 'block';
@@ -335,11 +379,16 @@ async function solicitarAgendamento() {
 
     try {
         const formData = new URLSearchParams(dados);
+
         const msg = `*NOVA RESERVA - David Barber Studio*\n\n👤 Cliente: ${dados.cliente}\n📱 WhatsApp: ${dados.telefone}\n💈 Serviço: ${dados.servico}\n📅 Data: ${dados.data.split('-').reverse().join('/')}\n⏰ Hora: ${dados.hora}\n✂️ Barbeiro: ${dados.barbeiro}`;
         const whatsappUrl = `https://wa.me/5595991554792?text=${encodeURIComponent(msg)}`;
         window.open(whatsappUrl, '_blank');
 
-        fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' });
+        // NO CAMBIO NADA - SIGUE ENVIANDO RÁPIDO AL SHEETS
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: formData
+        });
 
         setTimeout(() => {
             confirmDiv.style.display = 'none';
@@ -358,4 +407,5 @@ async function solicitarAgendamento() {
 }
 </script>
 </body>
-</html>
+    </html>
+    
