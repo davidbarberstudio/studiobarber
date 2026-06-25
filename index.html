@@ -218,18 +218,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const res = await fetch(`${SCRIPT_URL}?action=getServicos`);
     mapaServicos = await res.json();
 
-    // PRECIOS CORREGIDOS
-    const precos = {
-        'Corte Masculino': 'R$40',
-        'Barba': 'R$30',
-        'Corte e Barba': 'R$70',
-        'Sobrancelha': 'R$10'
-    };
 
     const servicoSelect = document.getElementById('servico');
     servicoSelect.innerHTML = '<option value="">Selecione um serviço</option>';
     Object.keys(mapaServicos).forEach(servico => {
-        const preco = precos[servico] || '';
+        const preco = mapaServicos[servico].preco || '';
         servicoSelect.innerHTML += `<option value="${servico}">${servico} — ${preco}</option>`;
     });
 
