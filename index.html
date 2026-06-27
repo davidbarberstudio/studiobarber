@@ -307,24 +307,30 @@ async function carregarHorarios() {
                 horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Ocupado</option>`;
                 return;
             }
+            
+if (bloquesNecesarios > 1) {
+    let noCabe = false;
+    for (let i = 1; i < bloquesNecesarios; i++) {
+        const siguienteSlot = todosHorarios[idx + i];
 
-            if (bloquesNecesarios > 1) {
-                let noCabe = false;
-                for (let i = 1; i < bloquesNecesarios; i++) {
-                    const siguienteSlot = todosHorarios[idx + i];
-                    if (!siguienteSlot) break;
-                    const horaActual = todosHorarios[idx];
-                    if (horaActual <= '11:30' && siguienteSlot >= '13:00') break;
-                    if (horariosOcupados.has(siguienteSlot)) {
-                        noCabe = true;
-                        break;
-                    }
-                }
-                if (noCabe) {
-                    horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Não cabe</option>`;
-                    return;
-                }
-            }
+        // Si no hay más horarios, no cabe
+        if (!siguienteSlot) {
+            noCabe = true;
+            break;
+        }
+
+        // Si el siguiente slot ya está ocupado, no cabe
+        if (horariosOcupados.has(siguienteSlot)) {
+            noCabe = true;
+            break;
+        }
+    }
+
+    if (noCabe) {
+        horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Não cabe</option>`;
+        return;
+    }
+}
 
             horaSelect.innerHTML += `<option value="${hora}">${hora}</option>`;
             hayHorariosLibres = true;
