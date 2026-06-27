@@ -72,7 +72,6 @@ body {
 .card span { display: block; margin-top: 6px; font-weight: bold; }
 .card.active { border: 2px solid #fdf0cd; box-shadow: 0 0 12px rgba(197, 160, 89, 0.6); }
 
-/* LABELS GRANDES Y DORADOS COMO TE GUSTARON */
 label {
     display: block;
     margin: 16px 0 8px;
@@ -94,7 +93,6 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 #confirmacao { display: none; margin-top: 15px; color: #fdf0cd; font-weight: bold; font-size: 15px; background: #110f0a; padding: 14px; border-radius: 10px; border: 1px solid #c5a059; }
 .loading { text-align: center; color: #c5a059; margin-top: 10px; font-size: 14px; }
 
-/* MENSAJE ERROR */
 .erro-msg {
     display: none;
     background: #3a0f0f;
@@ -120,9 +118,9 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 <div class="slogan">Estilo, Precisão e Confiança</div>
 
 <div class="horarios-info">
-  🕒 Seg: 08:30–11:00, 13:00–17:30<br>
-  🕒 Ter a Sex: 08:30–11:00, 13:00–19:00<br>
-  🕒 Sáb: 08:00–11:30, 13:00–17:00
+  🕒 Seg: Fechado<br>
+  🕒 Ter a Sex: 08:00–11:00, 13:00–19:00<br>
+  🕒 Sáb: 08:00–11:00, 13:30–17:00
 </div>
 
 <div id="form-container">
@@ -166,9 +164,6 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHurr-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec';
 
-const horariosManha = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30'];
-const horariosTarde = ['13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00'];
-
 // SPLASH 2 SEGUNDOS
 window.addEventListener('load', () => {
     setTimeout(() => {
@@ -183,13 +178,19 @@ function seleccionarBarber(nombre, element) {
     triggerCargaHoras();
 }
 
+// ARREGLO 1: HORARIOS CON HORA DE CIERRE INVISIBLE PARA CÁLCULO
 function getHorariosPorDia(dataStr) {
     const data = new Date(dataStr + 'T12:00:00');
-    const dia = data.getDay();
-    if (dia === 0) return [];
-    if (dia === 6) return [...horariosManha.slice(0, 7),...horariosTarde.slice(0, 8)];
-    if (dia === 1) return [...horariosManha.slice(1, 7),...horariosTarde.slice(0, 9)];
-    return [...horariosManha.slice(1, 7),...horariosTarde.slice(0, 12)];
+    const dia = data.getDay(); // 0=Dom, 6=Sab
+
+    if (dia === 0) return []; // Domingo cerrado
+
+    if (dia === 6) { // Sábado: hasta 17:00, pero 17:30 para cálculo
+        return ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
+    }
+
+    // Martes a Viernes: hasta 19:00, pero 19:30 para cálculo
+    return ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30'];
 }
 
 function esHoy(dataStr) {
@@ -205,12 +206,11 @@ function getHoraActual() {
     return `${h}:${m}`;
 }
 
-// PARCHE 1 DEFINITIVO - SIN ERRORES
 const mapaServicos = {
-    'Corte': { preco: 'R$40', blocos: 1 },
-    'Barba': { preco: 'R$30', blocos: 1 },
-    'Sobrancelha': { preco: 'R$10', blocos: 1 },
-    'Corte e Barba': { preco: 'R$70', blocos: 2 }
+    'Corte': { preco: 'R$40', bloques: 1 },
+    'Barba': { preco: 'R$30', bloques: 1 },
+    'Sobrancelha': { preco: 'R$10', bloques: 1 },
+    'Corte e Barba': { preco: 'R$70', bloques: 2 }
 };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -278,87 +278,43 @@ async function carregarHorarios() {
         const horariosOcupados = new Set();
         const horaActual = getHoraActual();
         const esDiaHoy = esHoy(data);
+        const bloquesNecesarios = mapaServicos[servico]?.bloques || 1;
 
-        const horaFechamento = todosHorarios[todosHorarios.length - 1]; // Último horario = hora de cierre
+        // ARREGLO 2: MARCA BLOQUES OCUPADOS
+        reservas.forEach(r => {
+            const idx = todosHorarios.indexOf(r.hora);
+            if (idx!== -1) {
+                for (let i = 0; i < r.bloques; i++) {
+                    if (idx + i < todosHorarios.length) {
+                        horariosOcupados.add(todosHorarios[idx + i]);
+                    }
+                }
+            }
+        });
 
-reservas.forEach(r => {
-  const idx = todosHorarios.indexOf(r.hora);
-  if (idx!== -1) {
-    // Marca los bloques ocupados
-    for (let i = 0; i < r.bloques; i++) {
-      if (idx + i < todosHorarios.length) {
-        horariosOcupados.add(todosHorarios[idx + i]);
-      }
-    }
-  }
-});
-
-// Lógica de "Não cabe" corregida
-todosHorarios.forEach((hora, idx) => {
-  const ocupado = horariosOcupados.has(hora);
-  const pasado = esDiaHoy && hora < horaActual;
-  
-  // Calcula si el servicio cabe antes del cierre
-  const bloquesNecesarios = mapaServicos[servico]?.bloques || 1;
-  const horaFinIndex = idx + bloquesNecesarios;
-  const naoCabe = horaFinIndex > todosHorarios.length; // > permite terminar justo al cierre
-  
-  if (pasado) {
-    horaSelect.innerHTML += `<option value="" disabled>${hora} - Passado</option>`;
-  } else if (ocupado) {
-    horaSelect.innerHTML += `<option value="" disabled>${hora} - Ocupado</option>`;
-  } else if (naoCabe) {
-    horaSelect.innerHTML += `<option value="" disabled>${hora} - Não cabe</option>`;
-  } else {
-    horaSelect.innerHTML += `<option value="${hora}">${hora}</option>`;
-    hayHorariosLibres = true;
-  }
-});
-
-        const bloquesNecesarios = mapaServicos[servico]?.blocos || 1;
+        // ARREGLO 3: QUITA EL ÚLTIMO HORARIO PARA MOSTRAR, PERO ÚSALO PARA CALCULAR
+        const horariosParaMostrar = todosHorarios.slice(0, -1);
         horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
         let hayHorariosLibres = false;
 
-        todosHorarios.forEach((hora, idx) => {
+        horariosParaMostrar.forEach((hora, idx) => {
             const ocupado = horariosOcupados.has(hora);
             const pasado = esDiaHoy && hora < horaActual;
 
+            // USA todosHorarios COMPLETO para saber si cabe
+            const horaFinIndex = idx + bloquesNecesarios;
+            const naoCabe = horaFinIndex >= todosHorarios.length;
+
             if (pasado) {
-                horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Passado</option>`;
-                return;
+                horaSelect.innerHTML += `<option value="" disabled>${hora} - Passado</option>`;
+            } else if (ocupado) {
+                horaSelect.innerHTML += `<option value="" disabled>${hora} - Ocupado</option>`;
+            } else if (naoCabe) {
+                horaSelect.innerHTML += `<option value="" disabled>${hora} - Não cabe</option>`;
+            } else {
+                horaSelect.innerHTML += `<option value="${hora}">${hora}</option>`;
+                hayHorariosLibres = true;
             }
-
-            if (ocupado) {
-                horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Ocupado</option>`;
-                return;
-            }
-            
-if (bloquesNecesarios > 1) {
-    let noCabe = false;
-    for (let i = 1; i < bloquesNecesarios; i++) {
-        const siguienteSlot = todosHorarios[idx + i];
-
-        // Si no hay más horarios, no cabe
-        if (!siguienteSlot) {
-            noCabe = true;
-            break;
-        }
-
-        // Si el siguiente slot ya está ocupado, no cabe
-        if (horariosOcupados.has(siguienteSlot)) {
-            noCabe = true;
-            break;
-        }
-    }
-
-    if (noCabe) {
-        horaSelect.innerHTML += `<option value="${hora}" disabled>${hora} - Não cabe</option>`;
-        return;
-    }
-}
-
-            horaSelect.innerHTML += `<option value="${hora}">${hora}</option>`;
-            hayHorariosLibres = true;
         });
 
         if (!hayHorariosLibres) {
@@ -382,7 +338,6 @@ async function solicitarAgendamento() {
     const confirmDiv = document.getElementById('confirmacao');
     const erroMsg = document.getElementById('erroMsg');
 
-    // VALIDACIÓN - SI FALTA ALGO NO ENVÍA
     const data = document.getElementById('data').value;
     const hora = document.getElementById('hora').value;
     const cliente = document.getElementById('cliente').value;
@@ -416,7 +371,6 @@ async function solicitarAgendamento() {
         const whatsappUrl = `https://wa.me/5595991554792?text=${encodeURIComponent(msg)}`;
         window.open(whatsappUrl, '_blank');
 
-        // NO CAMBIO NADA - SIGUE ENVIANDO RÁPIDO AL SHEETS
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: formData
@@ -439,6 +393,4 @@ async function solicitarAgendamento() {
 }
 </script>
 </body>
-    </html>
-
-   
+</html>
