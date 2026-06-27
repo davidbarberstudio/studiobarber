@@ -205,28 +205,38 @@ function getHoraActual() {
     return `${h}:${m}`;
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const dataInput = document.getElementById('data');
-    const hoje = new Date();
-    dataInput.min = hoje.toISOString().split('T')[0];
+// PARCHE 1 DEFINITIVO - SIN ERRORES
+const mapaServicos = {
+    'Corte': { preco: 'R$40', blocos: 1 },
+    'Barba': { preco: 'R$30', blocos: 1 },
+    'Sobrancelha': { preco: 'R$10', blocos: 1 },
+    'Corte e Barba': { preco: 'R$70', blocos: 2 }
+};
 
-    const maxData = new Date();
-    maxData.setDate(hoje.getDate() + 30);
-    dataInput.max = maxData.toISOString().split('T')[0];
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        const dataInput = document.getElementById('data');
+        const hoje = new Date();
+        dataInput.min = hoje.toISOString().split('T')[0];
+        const maxData = new Date();
+        maxData.setDate(hoje.getDate() + 30);
+        dataInput.max = maxData.toISOString().split('T')[0];
 
-    const res = await fetch(`${SCRIPT_URL}?action=getServicos`);
-    mapaServicos = await res.json();
+        const servicoSelect = document.getElementById('servico');
+        servicoSelect.innerHTML = '<option value="">Selecione um serviço</option>';
 
+        for (const servico in mapaServicos) {
+            const preco = mapaServicos[servico].preco;
+            servicoSelect.innerHTML += '<option value="' + servico + '">' + servico + ' — ' + preco + '</option>';
+        }
 
-    const servicoSelect = document.getElementById('servico');
-    servicoSelect.innerHTML = '<option value="">Selecione um serviço</option>';
-    Object.keys(mapaServicos).forEach(servico => {
-        const preco = mapaServicos[servico].preco || '';
-        servicoSelect.innerHTML += `<option value="${servico}">${servico} — ${preco}</option>`;
-    });
+        document.getElementById('data').addEventListener('change', triggerCargaHoras);
+        document.getElementById('servico').addEventListener('change', triggerCargaHoras);
 
-    document.getElementById('data').addEventListener('change', triggerCargaHoras);
-    document.getElementById('servico').addEventListener('change', triggerCargaHoras);
+        console.log('Serviços carregados com sucesso');
+    } catch(e) {
+        console.error('Erro ao carregar serviços:', e);
+    }
 });
 
 function triggerCargaHoras() {
