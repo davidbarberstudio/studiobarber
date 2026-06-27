@@ -281,8 +281,7 @@ async function carregarHorarios() {
             }
         });
 
-        const bloquesNecesarios = mapaServicos[servico] || 1;
-
+        const bloquesNecesarios = mapaServicos[servico]?.blocos || 1;
         horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
         let hayHorariosLibres = false;
 
