@@ -279,16 +279,41 @@ async function carregarHorarios() {
         const horaActual = getHoraActual();
         const esDiaHoy = esHoy(data);
 
-        reservas.forEach(r => {
-            const idx = todosHorarios.indexOf(r.hora);
-            if (idx!== -1) {
-                for (let i = 0; i < r.bloques; i++) {
-                    if (idx + i < todosHorarios.length) {
-                        horariosOcupados.add(todosHorarios[idx + i]);
-                    }
-                }
-            }
-        });
+        const horaFechamento = todosHorarios[todosHorarios.length - 1]; // Último horario = hora de cierre
+
+reservas.forEach(r => {
+  const idx = todosHorarios.indexOf(r.hora);
+  if (idx!== -1) {
+    // Marca los bloques ocupados
+    for (let i = 0; i < r.bloques; i++) {
+      if (idx + i < todosHorarios.length) {
+        horariosOcupados.add(todosHorarios[idx + i]);
+      }
+    }
+  }
+});
+
+// Lógica de "Não cabe" corregida
+todosHorarios.forEach((hora, idx) => {
+  const ocupado = horariosOcupados.has(hora);
+  const pasado = esDiaHoy && hora < horaActual;
+  
+  // Calcula si el servicio cabe antes del cierre
+  const bloquesNecesarios = mapaServicos[servico]?.bloques || 1;
+  const horaFinIndex = idx + bloquesNecesarios;
+  const naoCabe = horaFinIndex > todosHorarios.length; // > permite terminar justo al cierre
+  
+  if (pasado) {
+    horaSelect.innerHTML += `<option value="" disabled>${hora} - Passado</option>`;
+  } else if (ocupado) {
+    horaSelect.innerHTML += `<option value="" disabled>${hora} - Ocupado</option>`;
+  } else if (naoCabe) {
+    horaSelect.innerHTML += `<option value="" disabled>${hora} - Não cabe</option>`;
+  } else {
+    horaSelect.innerHTML += `<option value="${hora}">${hora}</option>`;
+    hayHorariosLibres = true;
+  }
+});
 
         const bloquesNecesarios = mapaServicos[servico]?.blocos || 1;
         horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
