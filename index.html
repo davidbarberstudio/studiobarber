@@ -118,9 +118,9 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 <div class="slogan">Estilo, Precisão e Confiança</div>
 
 <div class="horarios-info">
-  🕒 Seg: 08:00–11:00, 13:30–17:30<br>
-  🕒 Ter a Sex: 08:00–11:00, 13:30–19:00<br>
-  🕒 Sáb: 08:00–11:00, 13:30–17:00
+  🕒 Seg: 08:30–11:00, 13:00–17:00<br>
+  🕒 Ter a Sex: 08:30–11:00, 13:00–19:00<br>
+  🕒 Sáb: 08:30–11:30, 13:00–17:00
 </div>
 
 <div id="form-container">
@@ -178,23 +178,23 @@ function seleccionarBarber(nombre, element) {
     triggerCargaHoras();
 }
 
-// PARCHE: AGREGUÉ 11:30 INVISIBLE PARA QUE 11:00 + CORTE E BARBA NO BLOQUEE 13:30
+// PARCHE 1: HORARIOS NUEVOS + 12:00 INVISIBLE SÁBADO
 function getHorariosPorDia(dataStr) {
     const data = new Date(dataStr + 'T12:00:00');
     const dia = data.getDay(); // 0=Dom, 1=Seg, 6=Sab
 
     if (dia === 0) return []; // Domingo cerrado
 
-    if (dia === 1) { // LUNES: hasta 17:00, pongo 17:30 para cálculo
-        return ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
+    if (dia === 1) { // LUNES: 08:30-11:00, 13:00-17:00 + 17:30 cálculo
+        return ['08:30','09:00','09:30','10:00','10:30','11:00','11:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
     }
 
-    if (dia === 6) { // SÁBADO: hasta 17:00, pongo 17:30 para cálculo
-        return ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
+    if (dia === 6) { // SÁBADO: 08:30-11:30, 12:00 INVISIBLE, 13:00-17:00 + 17:30 cálculo
+        return ['08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
     }
 
-    // MARTES A VIERNES: hasta 19:00, pongo 19:30 para cálculo
-    return ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30'];
+    // MARTES A VIERNES: 08:30-11:00, 13:00-19:00 + 19:30 cálculo
+    return ['08:30','09:00','09:30','10:00','10:30','11:00','11:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30'];
 }
 
 function esHoy(dataStr) {
@@ -296,8 +296,8 @@ async function carregarHorarios() {
             }
         });
 
-        // PARCHE: QUITA 11:30 Y EL ÚLTIMO HORARIO PARA MOSTRAR
-        const horariosParaMostrar = todosHorarios.filter(h => h!== '11:30').slice(0, -1);
+        // PARCHE 2: OCULTA 11:30 Y 12:00 + ÚLTIMO HORARIO
+        const horariosParaMostrar = todosHorarios.filter(h => h!== '11:30' && h!== '12:00').slice(0, -1);
         horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
         let hayHorariosLibres = false;
 
