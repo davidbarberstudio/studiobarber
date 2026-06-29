@@ -94,15 +94,33 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 .loading { text-align: center; color: #c5a059; margin-top: 10px; font-size: 14px; }
 
 .erro-msg {
-    display: none;
-    background: #3a0f0f;
-    color: #ff6b6b;
-    padding: 12px;
-    border-radius: 8px;
-    margin-top: 10px;
-    border: 1px solid #ff6b6b;
-    font-size: 14px;
-    font-weight: bold;
+  display: none;
+  background: linear-gradient(135deg, #4a1f1f, #3a1515);
+  color: #ff8a8a;
+  padding: 16px 20px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  border: 2px solid #ff4444;
+  box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
+  margin: 15px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  animation: shake 0.4s ease-in-out;
+}
+
+.erro-msg::before {
+  content: "⚠️";
+  font-size: 22px;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
 }
 </style>
 </head>
