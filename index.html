@@ -178,7 +178,6 @@ function seleccionarBarber(nombre, element) {
     triggerCargaHoras();
 }
 
-// PARCHE 1: LUNES HASTA 17:30 + HORA DE CIERRE INVISIBLE
 function getHorariosPorDia(dataStr) {
     const data = new Date(dataStr + 'T12:00:00');
     const dia = data.getDay(); // 0=Dom, 1=Seg, 6=Sab
@@ -284,7 +283,7 @@ async function carregarHorarios() {
         const esDiaHoy = esHoy(data);
         const bloquesNecesarios = mapaServicos[servico]?.bloques || 1;
 
-        // MARCA BLOQUES OCUPADOS
+        // PARCHE 1: MARCA BLOQUES OCUPADOS CORRECTAMENTE
         reservas.forEach(r => {
             const idx = todosHorarios.indexOf(r.hora);
             if (idx!== -1) {
@@ -296,25 +295,42 @@ async function carregarHorarios() {
             }
         });
 
-        // QUITA EL ÚLTIMO HORARIO PARA MOSTRAR, PERO ÚSALO PARA CALCULAR
         const horariosParaMostrar = todosHorarios.slice(0, -1);
         horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
         let hayHorariosLibres = false;
 
         horariosParaMostrar.forEach((hora, idx) => {
-            const ocupado = horariosOcupados.has(hora);
             const pasado = esDiaHoy && hora < horaActual;
 
-            // PARCHE 2: CAMBIÉ >= POR > PARA QUE EL ÚLTIMO HORARIO SÍ QUEPA
-            const horaFinIndex = idx + bloquesNecesarios;
-            const naoCabe = horaFinIndex > todosHorarios.length;
+            // PARCHE 2: VERIFICA SI CUALQUIERA DE LOS BLOQUES NECESARIOS ESTÁ OCUPADO O NO EXISTE
+            let bloqueado = false;
+            let motivoBloqueio = '';
 
             if (pasado) {
-                horaSelect.innerHTML += `<option value="" disabled>${hora} - Passado</option>`;
-            } else if (ocupado) {
-                horaSelect.innerHTML += `<option value="" disabled>${hora} - Ocupado</option>`;
-            } else if (naoCabe) {
-                horaSelect.innerHTML += `<option value="" disabled>${hora} - Não cabe</option>`;
+                bloqueado = true;
+                motivoBloqueio = 'Passado';
+            } else {
+                for (let i = 0; i < bloquesNecesarios; i++) {
+                    const slotVerificar = todosHorarios[idx + i];
+
+                    // Si se pasa del horario de cierre
+                    if (!slotVerificar) {
+                        bloqueado = true;
+                        motivoBloqueio = 'Não cabe';
+                        break;
+                    }
+
+                    // Si alguno de los bloques está ocupado
+                    if (horariosOcupados.has(slotVerificar)) {
+                        bloqueado = true;
+                        motivoBloqueio = 'Ocupado';
+                        break;
+                    }
+                }
+            }
+
+            if (bloqueado) {
+                horaSelect.innerHTML += `<option value="" disabled>${hora} - ${motivoBloqueio}</option>`;
             } else {
                 horaSelect.innerHTML += `<option value="${hora}">${hora}</option>`;
                 hayHorariosLibres = true;
