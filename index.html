@@ -215,6 +215,14 @@ button:disabled { background: #222222; color: #555555; cursor: not-allowed; }
 </div>
 
 <script>
+    // Funções do Modal de Erro
+function mostrarErroModal() {
+  document.getElementById('modalErro').style.display = 'flex';
+}
+
+function fecharModal() {
+  document.getElementById('modalErro').style.display = 'none';
+}
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcQMOm11ba3BRV0pRKlVplcGx0goPhtHIHurr-jm0sa0rzs9ujvdeTH4xFEyPIhMKjlQ/exec';
 
 // SPLASH 2 SEGUNDOS
@@ -422,13 +430,10 @@ async function solicitarAgendamento() {
     const telefone = document.getElementById('telefone').value;
     const servico = document.getElementById('servico').value;
 
-    if (!data ||!hora ||!cliente ||!telefone ||!servico) {
-        erroMsg.style.display = 'block';
-        setTimeout(() => erroMsg.style.display = 'none', 3000);
-        return;
+    if (!data || !hora || !cliente || !telefone || !servico) {
+  mostrarErroModal(); // <-- LLAMA AL MODAL NUEVO
+  return;
     }
-
-    erroMsg.style.display = 'none';
     btn.disabled = true;
     btn.textContent = 'AGENDANDO...';
     confirmDiv.style.display = 'block';
