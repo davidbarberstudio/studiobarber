@@ -178,6 +178,7 @@ function seleccionarBarber(nombre, element) {
     triggerCargaHoras();
 }
 
+// PARCHE: AGREGUÉ 11:30 INVISIBLE PARA QUE 11:00 + CORTE E BARBA NO BLOQUEE 13:30
 function getHorariosPorDia(dataStr) {
     const data = new Date(dataStr + 'T12:00:00');
     const dia = data.getDay(); // 0=Dom, 1=Seg, 6=Sab
@@ -185,15 +186,15 @@ function getHorariosPorDia(dataStr) {
     if (dia === 0) return []; // Domingo cerrado
 
     if (dia === 1) { // LUNES: hasta 17:00, pongo 17:30 para cálculo
-        return ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
+        return ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
     }
 
     if (dia === 6) { // SÁBADO: hasta 17:00, pongo 17:30 para cálculo
-        return ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
+        return ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
     }
 
     // MARTES A VIERNES: hasta 19:00, pongo 19:30 para cálculo
-    return ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30'];
+    return ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30'];
 }
 
 function esHoy(dataStr) {
@@ -283,7 +284,7 @@ async function carregarHorarios() {
         const esDiaHoy = esHoy(data);
         const bloquesNecesarios = mapaServicos[servico]?.bloques || 1;
 
-        // PARCHE 1: MARCA BLOQUES OCUPADOS CORRECTAMENTE
+        // MARCA BLOQUES OCUPADOS
         reservas.forEach(r => {
             const idx = todosHorarios.indexOf(r.hora);
             if (idx!== -1) {
@@ -295,14 +296,15 @@ async function carregarHorarios() {
             }
         });
 
-        const horariosParaMostrar = todosHorarios.slice(0, -1);
+        // PARCHE: QUITA 11:30 Y EL ÚLTIMO HORARIO PARA MOSTRAR
+        const horariosParaMostrar = todosHorarios.filter(h => h!== '11:30').slice(0, -1);
         horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
         let hayHorariosLibres = false;
 
-        horariosParaMostrar.forEach((hora, idx) => {
+        horariosParaMostrar.forEach((hora) => {
+            const idx = todosHorarios.indexOf(hora);
             const pasado = esDiaHoy && hora < horaActual;
 
-            // PARCHE 2: VERIFICA SI CUALQUIERA DE LOS BLOQUES NECESARIOS ESTÁ OCUPADO O NO EXISTE
             let bloqueado = false;
             let motivoBloqueio = '';
 
@@ -313,14 +315,12 @@ async function carregarHorarios() {
                 for (let i = 0; i < bloquesNecesarios; i++) {
                     const slotVerificar = todosHorarios[idx + i];
 
-                    // Si se pasa del horario de cierre
                     if (!slotVerificar) {
                         bloqueado = true;
                         motivoBloqueio = 'Não cabe';
                         break;
                     }
 
-                    // Si alguno de los bloques está ocupado
                     if (horariosOcupados.has(slotVerificar)) {
                         bloqueado = true;
                         motivoBloqueio = 'Ocupado';
