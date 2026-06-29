@@ -297,7 +297,12 @@ async function carregarHorarios() {
         });
 
         // PARCHE 2: OCULTA 11:30 Y 12:00 + ÚLTIMO HORARIO
-        const horariosParaMostrar = todosHorarios.filter(h => h!== '11:30' && h!== '12:00').slice(0, -1);
+        const esSabado = new Date(data + 'T12:00:00').getDay() === 6;
+const horariosParaMostrar = todosHorarios.filter(h => {
+    if (h === '12:00') return false;
+    if (h === '11:30' && !esSabado) return false;
+    return true;
+}).slice(0, -1);
         horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
         let hayHorariosLibres = false;
 
